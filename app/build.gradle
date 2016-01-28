@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+def SdkVersion = "23.1.1"
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    packagingOptions {
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+    defaultConfig {
+        applicationId "com.me.xpf.pigggeon"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    retrolambda {
+        javaVersion JavaVersion.VERSION_1_6
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    repositories {
+        maven { url 'https://clojars.org/repo/' }
+        maven { url "https://jitpack.io" }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile "com.android.support:appcompat-v7:$SdkVersion"
+    compile "com.android.support:design:$SdkVersion"
+    compile "com.android.support:cardview-v7:$SdkVersion"
+    //my common lib
+    compile 'com.github.willbe058:architect:0.3.2'
+    //useful lib
+    compile 'com.cocosw:bottomsheet:1.1.1@aar'
+    compile 'uk.co.chrisjenx:calligraphy:2.1.0'
+    compile 'com.umeng.analytics:analytics:latest.integration'
+    compile 'com.umeng:fb:5.4.0'
+    compile 'com.jenzz:materialpreference:1.3'
+    compile 'com.commit451:PhotoView:1.2.4'
+    compile 'com.afollestad:material-dialogs:0.7.7.0'
+    compile 'com.squareup:otto:1.3.8'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    //retrofit
+    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.squareup.retrofit:retrofit:2.0.0-beta3'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
+    compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta1'
+}
