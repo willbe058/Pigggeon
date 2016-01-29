@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/shots"
+            android:checked="true"
+            android:icon="@drawable/ic_shots_black_48dp"
+            android:title="@string/shots" />
+        <item
+            android:id="@+id/teams"
+            android:icon="@drawable/ic_teams_black_48dp"
+            android:title="@string/teams" />
+        <item
+            android:id="@+id/debuts"
+            android:icon="@drawable/ic_debutsstars_black_48dp"
+            android:title="@string/debuts" />
+        <item
+            android:id="@+id/playoffs"
+            android:icon="@drawable/ic_playoffs_black_48dp"
+            android:title="@string/playoff" />
+
+        <item
+            android:id="@+id/rebounds"
+            android:icon="@drawable/ic_rebounds_black_48dp"
+            android:title="@string/rebounds" />
+        <item
+            android:id="@+id/animated"
+            android:icon="@drawable/ic_animated_black_48dp"
+            android:title="@string/animated" />
+    </group>
+
+    <item android:title="@string/more">
+        <menu>
+            <item
+                android:id="@+id/setting"
+                android:icon="@drawable/ic_settings_black_48dp"
+                android:title="@string/action_settings" />
+            <item
+                android:id="@+id/feedback"
+                android:icon="@drawable/ic_feedback_black_24dp"
+                android:title="Feedback" />
+            <item
+                android:id="@+id/log_out"
+                android:icon="@drawable/ic_power_settings_new_black_48dp"
+                android:title="@string/log_out" />
+        </menu>
+    </item>
+</menu>

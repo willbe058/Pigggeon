@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.jenzz.materialpreference.PreferenceCategory android:title="@string/layout">
+        <com.afollestad.materialdialogs.prefs.MaterialListPreference
+            android:defaultValue="2"
+            android:dialogTitle="@string/display"
+            android:entries="@array/displayArray"
+            android:entryValues="@array/dispalyValue"
+            android:key="@string/dis_type"
+            android:summary="@string/summary_dis"
+            android:title="@string/display" />
+        <com.afollestad.materialdialogs.prefs.MaterialListPreference
+            android:defaultValue="light"
+            android:dialogTitle="@string/theme"
+            android:entries="@array/themeArray"
+            android:entryValues="@array/themeValue"
+            android:key="@string/theme_type"
+            android:summary="@string/themeSum"
+            android:title="@string/theme" />
+        <com.jenzz.materialpreference.Preference
+            android:key="@string/clear_type"
+            android:title="@string/clear" />
+    </com.jenzz.materialpreference.PreferenceCategory>
+    <com.jenzz.materialpreference.PreferenceCategory android:title="@string/help">
+        <com.jenzz.materialpreference.Preference
+            android:key="@string/feed_type"
+            android:title="@string/feedback" />
+        <com.jenzz.materialpreference.Preference
+            android:key="@string/help_type"
+            android:title="@string/help_su" />
+    </com.jenzz.materialpreference.PreferenceCategory>
+    <com.jenzz.materialpreference.PreferenceCategory android:title="@string/about">
+        <com.jenzz.materialpreference.Preference
+            android:key="@string/about_type"
+            android:title="@string/about_us" />
+    </com.jenzz.materialpreference.PreferenceCategory>
+</PreferenceScreen>

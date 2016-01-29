@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/popularity"
+        android:icon="@drawable/popluarity_36dp"
+        android:title="@string/popularity" />
+    <item
+        android:id="@+id/comments"
+        android:icon="@drawable/comments_36dp"
+        android:title="@string/comments" />
+    <item
+        android:id="@+id/recent"
+        android:icon="@drawable/recent_36dp"
+        android:title="@string/recent" />
+    <item
+        android:id="@+id/views"
+        android:icon="@drawable/views_36dp"
+        android:title="@string/views" />
+</menu>

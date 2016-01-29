@@ -1,4 +1,131 @@
 <resources>
     <string name="app_name">Pigggeon</string>
+    <string name="version">V 0.8.3 beta</string>
+    <string name="coder">Android Coder &#038; PM</string>
+    <string name="and">&#038;</string>
+
+
+    <!-- Drawer-->
+    <string name="shots">Shots</string>
+    <string name="teams">Teams</string>
+    <string name="debuts">Debuts</string>
+    <string name="playoff">Playoffs</string>
+    <string name="rebounds">Rebounds</string>
+    <string name="animated">Animated GIFs</string>
+
+    <!-- display-->
+    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="home">Home</string>
+    <string name="my_likes">My Likes</string>
+    <string name="following">Following</string>
+    <string name="my_shots">My Shots</string>
+    <string name="log_out">Log out</string>
+    <string name="more">More</string>
+    <string name="sort">Sort By</string>
+    <string name="card">Card View</string>
+    <string name="water_fall">Water Fall</string>
+    <string name="donate">Donate Us</string>
+    <string name="c_shot">Create a Shot</string>
+    <string name="c_bucket">Create a Bucket</string>
+    <string name="popularity">popularity</string>
+    <string name="views">views</string>
+    <string name="comments">comments</string>
+    <string name="recent">recent</string>
+
+    <!--setting-->
+    <string name="layout">General</string>
+    <string name="display">Display</string>
+    <string name="help">Help and feedback</string>
+    <string name="about">About</string>
+
+    <string name="clear">Clear cache</string>
+    <string name="feedback">Feedback</string>
+    <string name="help_su">Help</string>
+    <string name="about_us">About us</string>
+
+    <string name="summary_dis">The way you browse in Home page</string>
+    <string name="dis_type">displayType</string>
+    <string name="theme_type">themeType</string>
+    <string name="clear_type">clearType</string>
+    <string name="feed_type">feedType</string>
+    <string name="help_type">helpType</string>
+    <string name="about_type">aboutType</string>
+
+
+    <string name="welcome">Welcome!</string>
+    <string name="intro">Browsing, following, recording, customize your personal Dribbble! </string>
+    <string name="theme">Theme</string>
+    <string name="themeSum">dark or light theme for </string>
+    <string name="dark">Dark</string>
+    <string name="light">Pigggeon Light</string>
+    <string name="defaltTheme">light</string>
+
+    <string name="no_internet">Please check your network</string>
+    <string name="timeout">Timeout</string>
+    <string name="no_such_page">Sorry, the page you are visiting isn\'t exist</string>
+    <string name="no_auth">Your account haven\'t been authorized</string>
+    <string name="too_many_request">Too many request, Dribbble limit the request for 60 times a minute</string>
+    <string name="error">Connection error</string>
+
+    <string name="loading">loading...</string>
+    <string name="add_bucket">Add this shot to a bucket</string>
+    <string name="done">DONE</string>
+    <string name="create_new_bucket">CREATE A NEW BUCKET</string>
+    <string name="add_complete">Add complete !</string>
+    <string name="create_title">Create a new bucket</string>
+    <string name="create">CREATE</string>
+    <string name="cancel">CANCEL</string>
+    <string name="name_not_null">Name of bucket can not be null !</string>
+
+    <string name="name">Name</string>
+    <string name="des_create">Description (optional)</string>
+
+    <string name="no_des">oh, author didn\'t left any description</string>
+    <string name="no_tag">no tag</string>
+
+    <!--list card-->
+    <string-array name="comment_list_card">
+        <item>Like</item>
+        <item>Reply</item>
+        <item>Paste</item>
+    </string-array>
+    <!-- sort -->
+    <string-array name="sort">
+        <item>Popularity</item>
+        <item>Views</item>
+        <item>Comments</item>
+        <item>Recent</item>
+    </string-array>
+
+    <!-- preference -->
+    <string-array name="displayArray">
+        <item>@string/card</item>
+        <item>@string/water_fall</item>
+    </string-array>
+
+    <string-array name="dispalyValue">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="themeArray">
+        <item>@string/light</item>
+        <item>@string/dark</item>
+    </string-array>
+    <string-array name="themeValue">
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+
+    <!-- activity -->
+    <string name="title_activity_shot_detail">ShotDetailActivity</string>
+    <string name="title_activity_image">ImageActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_my_like">MyLikeActivity</string>
+    <string name="title_activity_user_profile">UserProfileActivity</string>
+    <string name="title_activity_bucket">BucketActivity</string>
+    <string name="title_activity_tour">TourActivity</string>
+    <string name="title_activity_about">AboutActivity</string>
+    <string name="title_activity_feed_back">FeedBackActivity</string>
 </resources>
