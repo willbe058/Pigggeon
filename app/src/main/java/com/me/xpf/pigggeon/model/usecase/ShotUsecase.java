@@ -25,10 +25,10 @@ public class ShotUsecase implements IModel<List<Shot>> {
     }
 
     public Observable<List<Shot>> getShots(com.me.xpf.pigggeon.model.Shot shot, Sort sort, int page) {
-        Observable<List<Shot>> observable = ApiDribbble.dribbble().shots(page, Config.PER_PAGE, "", "");
+        Observable<List<Shot>> observable = ApiDribbble.dribbble().shots(page, Config.PER_PAGE, null, null);
         switch (shot) {
             case SHOTS:
-                observable = ApiDribbble.dribbble().shots(page, Config.PER_PAGE, "", "");
+                observable = ApiDribbble.dribbble().shots(page, Config.PER_PAGE, null, null);
                 break;
             case TEAMS:
                 break;

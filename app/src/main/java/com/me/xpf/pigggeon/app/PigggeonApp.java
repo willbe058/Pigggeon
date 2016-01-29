@@ -21,7 +21,6 @@ public class PigggeonApp extends CommonApplication {
 
     public static String getClientAccessToken() {
 
-
         return PreferenceUtil.getPreString(Config.PRE_ACCESS_TOKEN_KEY, "");
     }
 

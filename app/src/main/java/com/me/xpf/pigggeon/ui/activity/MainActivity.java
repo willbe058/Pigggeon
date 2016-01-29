@@ -56,16 +56,14 @@ public class MainActivity extends BaseStatusBarTintActivity {
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
 
-    @Bind(R.id.header_photo)
-    ImageView header;
+    private ImageView header;
 
-    @Bind(R.id.user_name_in_drawer)
-    TextView userName;
+    private TextView userName;
 
-    @Bind(R.id.bio)
-    HtmlTextView userBio;
+    private HtmlTextView userBio;
 
-    @Bind(R.id.backImg)
+    private View headerView;
+
     static ImageView blurBack;
 
     @Bind(R.id.nav_view)
@@ -102,6 +100,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
     @Override
     protected void setupContentView() {
         setContentView(R.layout.activity_main);
+        blurBack = ((ImageView) findViewById(R.id.backImg));
     }
 
     @Override
@@ -140,6 +139,11 @@ public class MainActivity extends BaseStatusBarTintActivity {
     }
 
     private void setupDrawerContent(final NavigationView navigationView) {
+        headerView = navigationView.getHeaderView(0);
+        header = ((ImageView) headerView.findViewById(R.id.header_photo));
+        userName = ((TextView) headerView.findViewById(R.id.user_name_in_drawer));
+        userBio = ((HtmlTextView) headerView.findViewById(R.id.bio));
+
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             CharSequence text = "SHOTS";
             switch (menuItem.getItemId()) {

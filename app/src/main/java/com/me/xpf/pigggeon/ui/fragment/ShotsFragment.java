@@ -2,6 +2,7 @@ package com.me.xpf.pigggeon.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -103,6 +104,13 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
         setOnUpdateListener(adapter);
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
+        presenter.loadShots(mShot, mSort, 1);
+    }
+
     @NonNull
     @Override
     public ShotsPresenter createPresenter() {
@@ -111,13 +119,18 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
 
     @Override
     public void showError(String error) {
-        Snackbar.make(mRecyclerView, error, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mRecyclerView, error, Snackbar.LENGTH_INDEFINITE).setAction("RETRY", v -> {
+            adapter.clearData();
+            presenter.loadShots(mShot, mSort, 1);
+        }).show();
+        shots.remove(shots.size() - 1);
+        adapter.notifyItemRemoved(shots.size());
     }
 
     @Override
     public void progress(boolean isShow) {
         if (isShow) {
-            swipeRefreshLayout.setRefreshing(true);
+            swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
         } else {
             swipeRefreshLayout.setRefreshing(false);
         }
@@ -125,7 +138,7 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
 
     @Override
     public void setData(List<Shot> list) {
-        if (shots.size() != 0) {
+        if (list.size() != 0) {
             this.shots = list;
             adapter.setData(shots);
         }
@@ -133,7 +146,7 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
 
     @Override
     public void setDataBottom(List<Shot> list) {
-        if (shots.size() != 0) {
+        if (list.size() != 0) {
             shots.remove(shots.size() - 1);
             adapter.notifyItemRemoved(shots.size());
             for (int i = 0; i < list.size(); i++) {

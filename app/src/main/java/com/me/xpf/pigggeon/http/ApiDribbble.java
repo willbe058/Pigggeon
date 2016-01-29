@@ -1,23 +1,19 @@
 package com.me.xpf.pigggeon.http;
 
-import com.me.xpf.pigggeon.app.PigggeonApp;
 import com.me.xpf.pigggeon.config.Constant;
 import com.me.xpf.pigggeon.model.api.AccessToken;
 import com.me.xpf.pigggeon.model.api.Shot;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
 
 import java.util.List;
 
-import retrofit.CallAdapter;
-import retrofit.Callback;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
-import retrofit.http.GET;
-import retrofit.http.Header;
-import retrofit.http.POST;
-import retrofit.http.Query;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.RxJavaCallAdapterFactory;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -25,12 +21,12 @@ import rx.Observable;
  */
 public class ApiDribbble implements Constant {
 
-    private static OkHttpClient okHttpClient = new OkHttpClient();
+    private static OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
 
     //the retrofit instance for access token
     private static Retrofit accessRetrofit = new Retrofit.Builder()
             .baseUrl(BASE_AUTH_RUL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(retrofit2.GsonConverterFactory.create())
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .build();
 
@@ -55,20 +51,22 @@ public class ApiDribbble implements Constant {
      * @return
      */
     public static DribbbleService dribbble() {
-
-        okHttpClient.networkInterceptors().add(chain -> {
-            Request request = chain.request()
-                    .newBuilder()
-                    .addHeader("Cache-Control", "no-cache")
-                    .addHeader("Authorization", PigggeonApp.getClientAccessToken())
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        okHttpClient.addNetworkInterceptor(chain -> {
+            Request original = chain.request();
+            Request request = original.newBuilder()
+                    .header("Authorization", "Bearer dc9c44800ea3c310d0dbd6ac0f94271e95cf408844e05874f10f1ac5c3e13744")
+                    .header("Cache-Control", "no-cache")
                     .build();
             return chain.proceed(request);
-        });
+        })
+                .addInterceptor(interceptor);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
+                .client(okHttpClient.build())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
         return retrofit.create(DribbbleService.class);

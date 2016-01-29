@@ -20,9 +20,12 @@ public class ShotsPresenter extends BasePresenter<ShotsView> {
     public void loadShots(Shot shot, Sort sort, int page) {
 
         if (getView() != null) {
-            getView().progress(true);
             usecase.getShots(shot, sort, page)
-                    .finallyDo(() -> getView().progress(false))
+                    .finallyDo(() -> {
+                        if (getView() != null) {
+                            getView().progress(false);
+                        }
+                    })
                     .subscribe(new Subscriber<List<com.me.xpf.pigggeon.model.api.Shot>>() {
                         @Override
                         public void onCompleted() {
@@ -39,7 +42,7 @@ public class ShotsPresenter extends BasePresenter<ShotsView> {
                         @Override
                         public void onNext(List<com.me.xpf.pigggeon.model.api.Shot> shots) {
                             if (getView() != null) {
-                                if (page > 1) {
+                                if (page == 1) {
                                     getView().setData(shots);
                                 } else {
                                     getView().setDataBottom(shots);
