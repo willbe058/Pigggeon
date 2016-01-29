@@ -9,6 +9,7 @@ import java.util.List;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.RxJavaCallAdapterFactory;
 import retrofit2.http.GET;
@@ -26,7 +27,7 @@ public class ApiDribbble implements Constant {
     //the retrofit instance for access token
     private static Retrofit accessRetrofit = new Retrofit.Builder()
             .baseUrl(BASE_AUTH_RUL)
-            .addConverterFactory(retrofit2.GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .build();
 

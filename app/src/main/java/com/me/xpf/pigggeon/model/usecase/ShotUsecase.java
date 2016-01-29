@@ -18,7 +18,6 @@ import rx.schedulers.Schedulers;
  */
 public class ShotUsecase implements IModel<List<Shot>> {
 
-
     @Override
     public Observable<List<Shot>> execute() {
         return null;
@@ -26,10 +25,8 @@ public class ShotUsecase implements IModel<List<Shot>> {
 
     public Observable<List<Shot>> getShots(String shot, String sort, int page) {
         Observable<List<Shot>> observable = ApiDribbble.dribbble().shots(page, Config.PER_PAGE, shot, sort);
-        return observable.subscribeOn(Schedulers.newThread())
+        return observable
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
-
-//    private Observable<List<Team>> getTeams() {
-//    }
 }
