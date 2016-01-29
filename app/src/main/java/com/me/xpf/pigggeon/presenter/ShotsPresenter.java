@@ -17,7 +17,7 @@ public class ShotsPresenter extends BasePresenter<ShotsView> {
 
     private ShotUsecase usecase = new ShotUsecase();
 
-    public void loadShots(Shot shot, Sort sort, int page) {
+    public void loadShots(String shot, String sort, int page) {
 
         if (getView() != null) {
             usecase.getShots(shot, sort, page)
@@ -35,7 +35,11 @@ public class ShotsPresenter extends BasePresenter<ShotsView> {
                         @Override
                         public void onError(Throwable e) {
                             if (getView() != null) {
-                                getView().showError(e.getLocalizedMessage());
+                                if (page == 1) {
+                                    getView().showError(e.getLocalizedMessage());
+                                } else {
+                                    getView().showErrorBottom(e.getLocalizedMessage());
+                                }
                             }
                         }
 

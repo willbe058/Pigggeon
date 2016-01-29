@@ -132,7 +132,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(ShotsFragment.getInstance(Shot.SHOTS, Sort.POPULARITY), "SHOTS");
+        adapter.addFragment(ShotsFragment.getInstance("", ""), "SHOTS");
         adapter.addFragment(new Fragment(), "FOLLOWING");
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(adapter);

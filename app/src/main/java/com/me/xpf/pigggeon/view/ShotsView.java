@@ -12,6 +12,8 @@ public interface ShotsView extends IView {
 
     void showError(String error);
 
+    void showErrorBottom(String error);
+
     void progress(boolean isShow);
 
     void setData(List<Shot> shots);

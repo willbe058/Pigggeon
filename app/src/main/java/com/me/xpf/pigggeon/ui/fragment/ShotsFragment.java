@@ -40,15 +40,15 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
 
     private List<Shot> shots = new ArrayList<>();
 
-    private com.me.xpf.pigggeon.model.Shot mShot;
+    private String mShot;
 
-    private Sort mSort;
+    private String mSort;
 
-    public static Fragment getInstance(com.me.xpf.pigggeon.model.Shot shot, Sort sort) {
+    public static Fragment getInstance(String shot, String sort) {
         ShotsFragment fragment = new ShotsFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_SHOT, shot);
-        bundle.putSerializable(KEY_SORT, sort);
+        bundle.putString(KEY_SHOT, shot);
+        bundle.putString(KEY_SORT, sort);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -57,8 +57,8 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mShot = ((com.me.xpf.pigggeon.model.Shot) getArguments().getSerializable(KEY_SHOT));
-            mSort = ((Sort) getArguments().getSerializable(KEY_SORT));
+            mShot = (getArguments().getString(KEY_SHOT));
+            mSort = (getArguments().getString(KEY_SORT));
         }
     }
 
@@ -120,8 +120,16 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
     @Override
     public void showError(String error) {
         Snackbar.make(mRecyclerView, error, Snackbar.LENGTH_INDEFINITE).setAction("RETRY", v -> {
-            adapter.clearData();
             presenter.loadShots(mShot, mSort, 1);
+            swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
+        }).show();
+    }
+
+    @Override
+    public void showErrorBottom(String error) {
+        Snackbar.make(mRecyclerView, error, Snackbar.LENGTH_INDEFINITE).setAction("RETRY", v -> {
+            presenter.loadShots(mShot, mSort, 1);
+            swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
         }).show();
         shots.remove(shots.size() - 1);
         adapter.notifyItemRemoved(shots.size());
@@ -140,7 +148,9 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
     public void setData(List<Shot> list) {
         if (list.size() != 0) {
             this.shots = list;
+            adapter.clearData();
             adapter.setData(shots);
+            adapter.onUpdateFinished();
         }
     }
 
