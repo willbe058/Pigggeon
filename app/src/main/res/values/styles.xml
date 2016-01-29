@@ -27,8 +27,32 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!--Login-->
+    <style name="Login" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimaryDark">@color/login</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <!--login button-->
+    <style name="MyButton">
+        <item name="android:background">@color/login_btn</item>
+    </style>
+
+    <style name="CreateButton">
+        <item name="android:background">@drawable/button_create</item>
+    </style>
+
+    <style name="ComfortaaText">
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:textSize">14sp</item>
+        <item name="fontPath">fonts/Comfortaa-Regular.ttf</item>
+    </style>
+
+    <style name="Theme.App.AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowNoTitle">false</item>
+        <!-- that's the important bit -->
+    </style>
 </resources>

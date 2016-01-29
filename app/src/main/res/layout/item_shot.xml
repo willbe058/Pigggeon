@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:stateListAnimator="@anim/raise"
+    android:translationZ="2dp"
+    app:cardCornerRadius="2dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.me.xpf.pigggeon.widget.SquareImageView
+            android:id="@+id/shot_photo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/gif_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="8dp"
+            android:src="@drawable/gif_logo"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/user_photo"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@id/shot_photo"
+            android:layout_margin="8dp" />
+
+        <TextView
+            android:id="@+id/shot_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/user_photo"
+            android:layout_marginRight="8dp"
+            android:layout_toRightOf="@id/user_photo"
+            android:ellipsize="end"
+            android:lines="2"
+            android:text="Nashville"
+            android:textColor="@color/card_name"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/shot_name"
+            android:layout_below="@id/shot_name"
+            android:text="by "
+            android:textColor="@color/colorPrimary"
+            android:textSize="12sp"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/shot_name"
+            android:layout_marginRight="8dp"
+            android:layout_toRightOf="@id/by"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="James Shock"
+            android:textColor="@color/card_user"
+            android:textSize="12sp"
+            android:textStyle="italic" />
+
+        <include
+            layout="@layout/include_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/user_photo"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="16dp" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

@@ -1,8 +1,21 @@
 <resources>
-            <style name="AppTheme.NoActionBar">
-            <item name="windowActionBar">false</item>
-            <item name="windowNoTitle">true</item>
-            <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-            <item name="android:statusBarColor">@android:color/transparent</item>
-        </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="MyButton">
+        <item name="android:elevation">4dp</item>
+        <item name="android:translationZ">8dp</item>
+        <item name="android:background">@drawable/button_ripple</item>
+    </style>
+
+    <style name="CreateButton">
+        <item name="android:elevation">8dp</item>
+        <item name="android:translationZ">12dp</item>
+        <item name="android:background">@drawable/button_create</item>
+    </style>
 </resources>
