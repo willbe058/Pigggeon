@@ -37,6 +37,8 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
 
     public static final String KEY_SORT = "key_sort";
 
+    public static final String KEY_FOLLOWING = "key_following";
+
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private ShotsAdapter adapter;
@@ -47,6 +49,8 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
 
     private String mSort;
 
+    private boolean isFollowing = false;
+
     public static Fragment getInstance(String shot, String sort) {
         ShotsFragment fragment = new ShotsFragment();
         Bundle bundle = new Bundle();
@@ -56,13 +60,21 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
         return fragment;
     }
 
+    public static Fragment getInstance() {
+        ShotsFragment fragment = new ShotsFragment();
+        fragment.isFollowing = true;
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BusProvider.getInstance().register(this);
         if (getArguments() != null) {
-            mShot = (getArguments().getString(KEY_SHOT));
-            mSort = (getArguments().getString(KEY_SORT));
+            if (!isFollowing) {
+                mShot = (getArguments().getString(KEY_SHOT));
+                mSort = (getArguments().getString(KEY_SORT));
+            }
         }
     }
 
@@ -185,16 +197,22 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
      */
     private void loadShots(int page) {
         presenter.cancel();
-        presenter.loadShots(mShot, mSort, page);
+        if (isFollowing) {
+            presenter.loadFollowings(page);
+        } else {
+            presenter.loadShots(mShot, mSort, page);
+        }
     }
 
     @Subscribe
     public void onUpdateShots(Event.UpdateShotEvent event) {
-        if (event != null) {
-            swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
-            this.mShot = event.getShot();
-            this.mSort = event.getSort();
-            loadShots(1);
+        if (!isFollowing) {
+            if (event != null) {
+                swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
+                this.mShot = event.getShot();
+                this.mSort = event.getSort();
+                loadShots(1);
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.me.xpf.pigggeon.ui.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -54,7 +53,6 @@ import butterknife.ButterKnife;
 import jp.wasabeef.blurry.Blurry;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
 import uk.co.chrisjenx.calligraphy.TypefaceUtils;
@@ -158,9 +156,9 @@ public class MainActivity extends BaseStatusBarTintActivity {
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(ShotsFragment.getInstance(
-                PreferenceUtil.getPreString(Config.PRE_SHOT_KEY, ""), "")
-                , PreferenceUtil.getPreString(Config.PRE_SHOT_KEY, "").toUpperCase());
-        adapter.addFragment(new Fragment(), "FOLLOWING");
+                PreferenceUtil.getPreString(Config.PRE_SHOT_KEY, "SHOTS"), "")
+                , PreferenceUtil.getPreString(Config.PRE_SHOT_KEY, "SHOTS").toUpperCase());
+        adapter.addFragment(ShotsFragment.getInstance(), "FOLLOWING");
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(adapter);
     }
@@ -172,6 +170,27 @@ public class MainActivity extends BaseStatusBarTintActivity {
         userBio = ((HtmlTextView) headerView.findViewById(R.id.bio));
         blurBack = ((ImageView) headerView.findViewById(R.id.backImg));
 
+        switch (PreferenceUtil.getPreString(Config.PRE_SHOT_KEY, "SHOTS")) {
+            case Constant.SHOTS:
+                navigationView.setCheckedItem(R.id.shots);
+                break;
+            case Constant.TEAMS:
+                navigationView.setCheckedItem(R.id.teams);
+                break;
+            case Constant.DEBUTS:
+                navigationView.setCheckedItem(R.id.debuts);
+                break;
+            case Constant.PLAY_OFFS:
+                navigationView.setCheckedItem(R.id.playoffs);
+                break;
+            case Constant.REBOUNDS:
+                navigationView.setCheckedItem(R.id.rebounds);
+                break;
+            case Constant.ANIMATED:
+                navigationView.setCheckedItem(R.id.animated);
+                break;
+
+        }
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             CharSequence text = "SHOTS";
             switch (menuItem.getItemId()) {

@@ -63,8 +63,8 @@ public class ApiDribbble implements Constant {
                     .header("Cache-Control", "no-cache")
                     .build();
             return chain.proceed(request);
-        })
-                .addInterceptor(interceptor);
+        });
+
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -87,8 +87,15 @@ public class ApiDribbble implements Constant {
                 @Query(LIST) String list,
                 @Query(SORT) String sortBy);
 
+        @GET("user/following/shots")
+        Observable<List<Shot>> followings(
+                @Query(PAGE) int page,
+                @Query(PER_PAGE) int perPage
+        );
+
         @GET("user")
         Observable<User> user();
+
     }
 
 }

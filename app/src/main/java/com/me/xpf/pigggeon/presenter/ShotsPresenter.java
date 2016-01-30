@@ -67,6 +67,51 @@ public class ShotsPresenter extends BasePresenter<ShotsView> {
         }
     }
 
+    public void loadFollowings(int page) {
+        if (getView() != null) {
+            Subscription subscription = usecase.getFollowings(page)
+                    .finallyDo(() -> {
+                        if (getView() != null) {
+                            getView().progress(false);
+
+                        }
+                    })
+                    .subscribe(new Subscriber<List<Shot>>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            if (getView() != null) {
+                                if (page == 1) {
+                                    getView().showError(e.getLocalizedMessage());
+                                } else {
+                                    getView().showErrorBottom(e.getLocalizedMessage());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onNext(List<Shot> shots) {
+                            if (getView() != null) {
+                                if (page == 1) {
+                                    getView().setData(shots);
+                                } else {
+                                    getView().setDataBottom(shots);
+                                }
+                            }
+                        }
+                    });
+            try {
+                subscriptions.put(subscription);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void cancel() {
         if (subscriptions.size() >= 2) {
             subscriptions.poll().unsubscribe();

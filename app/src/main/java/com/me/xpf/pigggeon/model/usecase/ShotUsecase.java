@@ -28,4 +28,10 @@ public class ShotUsecase implements IModel<List<Shot>> {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
+    public Observable<List<Shot>> getFollowings(int page) {
+        return ApiDribbble.dribbble().followings(page, Config.PER_PAGE)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
 }
