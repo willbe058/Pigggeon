@@ -15,4 +15,8 @@ public class Config {
 
     public static final String PRE_SORT_KEY = "pre_sort_key";
 
+    public static final String PRE_USER_ID_KEY = "pre_user_id_key";
+
+    public static final String PRE_FROM_MAIN_KEY = "pre_from_main_key";
+
 }

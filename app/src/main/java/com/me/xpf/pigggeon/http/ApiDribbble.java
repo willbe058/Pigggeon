@@ -1,8 +1,10 @@
 package com.me.xpf.pigggeon.http;
 
+import com.me.xpf.pigggeon.app.PigggeonApp;
 import com.me.xpf.pigggeon.config.Constant;
 import com.me.xpf.pigggeon.model.api.AccessToken;
 import com.me.xpf.pigggeon.model.api.Shot;
+import com.me.xpf.pigggeon.model.api.User;
 
 import java.util.List;
 
@@ -57,7 +59,7 @@ public class ApiDribbble implements Constant {
         okHttpClient.addNetworkInterceptor(chain -> {
             Request original = chain.request();
             Request request = original.newBuilder()
-                    .header("Authorization", "Bearer dc9c44800ea3c310d0dbd6ac0f94271e95cf408844e05874f10f1ac5c3e13744")
+                    .header("Authorization", PigggeonApp.getClientAccessToken())
                     .header("Cache-Control", "no-cache")
                     .build();
             return chain.proceed(request);
@@ -73,6 +75,9 @@ public class ApiDribbble implements Constant {
         return retrofit.create(DribbbleService.class);
     }
 
+    /**
+     * dribble apis
+     */
     public interface DribbbleService {
 
         @GET("shots")
@@ -81,6 +86,9 @@ public class ApiDribbble implements Constant {
                 @Query(PER_PAGE) int perPage,
                 @Query(LIST) String list,
                 @Query(SORT) String sortBy);
+
+        @GET("user")
+        Observable<User> user();
     }
 
 }

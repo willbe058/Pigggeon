@@ -12,12 +12,15 @@ import android.view.View;
 
 import com.me.xpf.pigggeon.R;
 import com.me.xpf.pigggeon.base.fragment.BaseRecyclerViewMvpFragment;
-import com.me.xpf.pigggeon.model.Sort;
+import com.me.xpf.pigggeon.event.BusProvider;
+import com.me.xpf.pigggeon.event.Event;
 import com.me.xpf.pigggeon.model.api.Shot;
 import com.me.xpf.pigggeon.presenter.ShotsPresenter;
 import com.me.xpf.pigggeon.ui.adapter.ShotsAdapter;
 import com.me.xpf.pigggeon.view.ShotsView;
 import com.me.xpf.pigggeon.widget.MarginDecoration;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 import com.xpf.me.architect.app.AppData;
 import com.xpf.me.architect.recyclerview.BaseAdapter;
 
@@ -56,10 +59,17 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BusProvider.getInstance().register(this);
         if (getArguments() != null) {
             mShot = (getArguments().getString(KEY_SHOT));
             mSort = (getArguments().getString(KEY_SORT));
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
     }
 
     @Override
@@ -71,7 +81,7 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
     protected void setupViews(View contentView) {
         swipeRefreshLayout = ((SwipeRefreshLayout) contentView.findViewById(R.id.swipe_refresh));
         swipeRefreshLayout.post(() -> swipeRefreshLayout.setOnRefreshListener(() -> {
-            presenter.loadShots(mShot, mSort, 1);
+            loadShots(1);
             updateListener.onUpdateFinished();
         }));
         swipeRefreshLayout.post(() -> swipeRefreshLayout.setColorSchemeColors(AppData.getColor(R.color.colorAccent)));
@@ -94,7 +104,7 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
         adapter.setOnLoadMoreListener(new BaseAdapter.OnLoadMoreListener() {
             @Override
             public void loadMore(int i) {
-                presenter.loadShots(mShot, mSort, i);
+                loadShots(i);
             }
         });
         mRecyclerView.setLayoutManager(manager);
@@ -108,7 +118,7 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
-        presenter.loadShots(mShot, mSort, 1);
+        loadShots(1);
     }
 
     @NonNull
@@ -120,7 +130,7 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
     @Override
     public void showError(String error) {
         Snackbar.make(mRecyclerView, error, Snackbar.LENGTH_INDEFINITE).setAction("RETRY", v -> {
-            presenter.loadShots(mShot, mSort, 1);
+            loadShots(1);
             swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
         }).show();
     }
@@ -128,7 +138,7 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
     @Override
     public void showErrorBottom(String error) {
         Snackbar.make(mRecyclerView, error, Snackbar.LENGTH_INDEFINITE).setAction("RETRY", v -> {
-            presenter.loadShots(mShot, mSort, 1);
+            loadShots(1);
             swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
         }).show();
         shots.remove(shots.size() - 1);
@@ -151,6 +161,7 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
             adapter.clearData();
             adapter.setData(shots);
             adapter.onUpdateFinished();
+            mRecyclerView.smoothScrollToPosition(0);
         }
     }
 
@@ -164,6 +175,26 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
                 adapter.setData(shots);
                 adapter.notifyItemInserted(shots.size());
             }
+        }
+    }
+
+    /**
+     * wrapper for presenter
+     *
+     * @param page
+     */
+    private void loadShots(int page) {
+        presenter.cancel();
+        presenter.loadShots(mShot, mSort, page);
+    }
+
+    @Subscribe
+    public void onUpdateShots(Event.UpdateShotEvent event) {
+        if (event != null) {
+            swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
+            this.mShot = event.getShot();
+            this.mSort = event.getSort();
+            loadShots(1);
         }
     }
 }

@@ -2,14 +2,13 @@ package com.me.xpf.pigggeon.model.usecase;
 
 import com.me.xpf.pigggeon.config.Config;
 import com.me.xpf.pigggeon.http.ApiDribbble;
-import com.me.xpf.pigggeon.model.Sort;
 import com.me.xpf.pigggeon.model.api.Shot;
-import com.me.xpf.pigggeon.model.api.Team;
 import com.xpf.me.architect.model.IModel;
 
 import java.util.List;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 

@@ -5,5 +5,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="margin">4dp</dimen>
     <dimen name="user_photo">35dp</dimen>
-
+    <dimen name="user">56dp</dimen>
 </resources>

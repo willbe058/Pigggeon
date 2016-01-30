@@ -20,6 +20,8 @@ android {
         exclude 'META-INF/maven/com.squareup.okio/okio/pom.properties'
     }
     defaultConfig {
+        renderscriptTargetApi 20
+        renderscriptSupportModeEnabled true
         applicationId "com.me.xpf.pigggeon"
         minSdkVersion 16
         targetSdkVersion 23
@@ -75,4 +77,5 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.0.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.android.support:support-v4:23.1.1'
+    compile 'jp.wasabeef:blurry:1.0.5'
 }

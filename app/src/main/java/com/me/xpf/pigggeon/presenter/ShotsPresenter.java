@@ -1,14 +1,17 @@
 package com.me.xpf.pigggeon.presenter;
 
-import com.me.xpf.pigggeon.model.Shot;
-import com.me.xpf.pigggeon.model.Sort;
+import com.me.xpf.pigggeon.model.api.Shot;
 import com.me.xpf.pigggeon.model.usecase.ShotUsecase;
 import com.me.xpf.pigggeon.view.ShotsView;
 import com.xpf.me.architect.presenter.BasePresenter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import rx.Subscriber;
+import rx.Subscription;
 
 /**
  * Created by pengfeixie on 16/1/29.
@@ -17,16 +20,18 @@ public class ShotsPresenter extends BasePresenter<ShotsView> {
 
     private ShotUsecase usecase = new ShotUsecase();
 
+    private BlockingQueue<Subscription> subscriptions = new ArrayBlockingQueue<>(2);
+
     public void loadShots(String shot, String sort, int page) {
 
         if (getView() != null) {
-            usecase.getShots(shot, sort, page)
+            Subscription subscription = usecase.getShots(shot, sort, page)
                     .finallyDo(() -> {
                         if (getView() != null) {
                             getView().progress(false);
                         }
                     })
-                    .subscribe(new Subscriber<List<com.me.xpf.pigggeon.model.api.Shot>>() {
+                    .subscribe(new Subscriber<List<Shot>>() {
                         @Override
                         public void onCompleted() {
 
@@ -54,6 +59,17 @@ public class ShotsPresenter extends BasePresenter<ShotsView> {
                             }
                         }
                     });
+            try {
+                subscriptions.put(subscription);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void cancel() {
+        if (subscriptions.size() >= 2) {
+            subscriptions.poll().unsubscribe();
         }
     }
 }

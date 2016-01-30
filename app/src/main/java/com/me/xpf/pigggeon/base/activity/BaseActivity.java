@@ -1,5 +1,6 @@
 package com.me.xpf.pigggeon.base.activity;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
@@ -11,6 +12,7 @@ import com.me.xpf.pigggeon.utils.SettingsUtil;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * Created by xgo on 12/9/15.
@@ -56,6 +58,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+
     }
 
     //  @Override public boolean onOptionsItemSelected(MenuItem item) {

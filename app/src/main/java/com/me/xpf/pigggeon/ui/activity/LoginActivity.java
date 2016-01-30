@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.app.AppCompatDialog;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -77,6 +79,7 @@ public class LoginActivity extends BaseStatusBarTintActivity implements Constant
         loginBtn.setOnClickListener(v -> {
             dialog = new AppCompatDialog(v.getContext());
             dialog.setContentView(R.layout.webview);
+            dialog.setTitle("Log in");
             webView = ((WebView) dialog.findViewById(R.id.webView));
             WebSettings settings = webView.getSettings();
             settings.setJavaScriptEnabled(true);
@@ -105,7 +108,7 @@ public class LoginActivity extends BaseStatusBarTintActivity implements Constant
                 dialog.dismiss();
 
                 final MaterialDialog progressDialog = new MaterialDialog.Builder(view.getContext())
-                        .progressIndeterminateStyle(true)
+                        .progress(true, 0)
                         .title("Contacting Dribbble...")
                         .cancelable(false)
                         .build();

@@ -15,11 +15,12 @@
         android:layout_height="184dp">
 
 
-        <com.me.xpf.pigggeon.widget.blureffect.TopCenterImageView
+        <ImageView
             android:id="@+id/backImg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="1" />
+            android:alpha="1"
+            android:scaleType="centerCrop"/>
 
         <ImageView
             android:id="@+id/header_photo"
