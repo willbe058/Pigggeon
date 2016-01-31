@@ -6,4 +6,5 @@
     <dimen name="margin">4dp</dimen>
     <dimen name="user_photo">35dp</dimen>
     <dimen name="user">56dp</dimen>
+    <dimen name="icon">24dp</dimen>
 </resources>

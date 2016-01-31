@@ -161,7 +161,6 @@ public class PigggeonLoadAnimationView extends RelativeLayout {
     private static void startAnimation() {
         new Handler().postDelayed(() -> {
             mLoadView.startAnimation(scaleOut);
-            Log.i("23333", "23333333");
         }, 200);
     }
 

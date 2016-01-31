@@ -3,6 +3,7 @@ package com.me.xpf.pigggeon.http;
 import com.me.xpf.pigggeon.app.PigggeonApp;
 import com.me.xpf.pigggeon.config.Constant;
 import com.me.xpf.pigggeon.model.api.AccessToken;
+import com.me.xpf.pigggeon.model.api.Comment;
 import com.me.xpf.pigggeon.model.api.Shot;
 import com.me.xpf.pigggeon.model.api.User;
 
@@ -16,6 +17,7 @@ import retrofit2.Retrofit;
 import retrofit2.RxJavaCallAdapterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
 
@@ -90,12 +92,16 @@ public class ApiDribbble implements Constant {
         @GET("user/following/shots")
         Observable<List<Shot>> followings(
                 @Query(PAGE) int page,
-                @Query(PER_PAGE) int perPage
-        );
+                @Query(PER_PAGE) int perPage);
 
         @GET("user")
         Observable<User> user();
 
+        @GET("shots/{id}/comments")
+        Observable<List<Comment>> comments(
+                @Path("id") int id,
+                @Query(PAGE) int page,
+                @Query(PER_PAGE) int perPage);
     }
 
 }

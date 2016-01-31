@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+
+    <RelativeLayout
+        android:id="@+id/user_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingPrefix">
+
+        <ImageView
+            android:id="@+id/user_photo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="16dp"
+            android:contentDescription="@string/app_name" />
+
+        <TextView
+            android:id="@+id/user_name_in_comment"
+            fontPath="fonts/Comfortaa-Bold.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/user_photo"
+            android:layout_toRightOf="@id/user_photo"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:text="Matteo Pasuto " />
+
+        <com.me.xpf.pigggeon.widget.HtmlTextView
+            android:id="@+id/comment_body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/user_name_in_comment"
+            android:layout_below="@id/user_name_in_comment"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:text="The innovation. And a spend bump.On that latest"
+            android:textColor="@android:color/black"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/create_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/comment_body"
+            android:layout_below="@id/comment_body"
+            android:text="2015-7-5"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/like_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/create_date"
+            android:layout_marginRight="16dp"
+            android:text="234" />
+
+        <ImageView
+            android:id="@+id/like_iamge"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignTop="@id/create_date"
+            android:layout_marginRight="8dp"
+            android:layout_toLeftOf="@id/like_count"
+            android:src="@drawable/ic_favorite_black_48dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignLeft="@id/create_date"
+            android:layout_below="@id/like_iamge"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/darker_gray" />
+
+    </RelativeLayout>
+</FrameLayout>

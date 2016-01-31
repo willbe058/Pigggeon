@@ -10,6 +10,7 @@ import com.me.xpf.pigggeon.config.Config;
 import com.me.xpf.pigggeon.model.api.Shot;
 import com.me.xpf.pigggeon.utils.PreferenceUtil;
 import com.me.xpf.pigggeon.utils.SettingsUtil;
+import com.me.xpf.pigggeon.widget.PigggeonLoadAnimationView;
 import com.me.xpf.pigggeon.widget.animation.GlideCircleTransform;
 import com.xpf.me.architect.recyclerview.BaseAdapter;
 import com.xpf.me.architect.recyclerview.RecyclerHolder;
@@ -48,6 +49,17 @@ public class ShotsAdapter extends BaseAdapter<Shot> {
     public ShotsAdapter(RecyclerView v, Collection<Shot> posts) {
         super(v, posts, R.layout.item_shot, R.layout.item_footer);
         this.avatarSize = mContext.getResources().getDimensionPixelSize(R.dimen.user_photo);
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerHolder holder, int position) {
+        if (getItemViewType(position) == VIEW_ITEM) {
+            convert(holder, realData.get(position), position, isScrolling);
+            holder.itemView.setOnClickListener(getOnClickListener(position));
+        } else {
+            ((PigggeonLoadAnimationView) holder.getView(R.id.load)).reset();
+            //do nothing?
+        }
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.me.xpf.pigggeon.event.BusProvider;
 import com.me.xpf.pigggeon.event.Event;
 import com.me.xpf.pigggeon.model.api.Shot;
 import com.me.xpf.pigggeon.presenter.ShotsPresenter;
+import com.me.xpf.pigggeon.ui.activity.ShotDetailActivity;
 import com.me.xpf.pigggeon.ui.adapter.ShotsAdapter;
 import com.me.xpf.pigggeon.view.ShotsView;
 import com.me.xpf.pigggeon.widget.MarginDecoration;
@@ -117,6 +119,12 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
             @Override
             public void loadMore(int i) {
                 loadShots(i);
+            }
+        });
+        adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, Object o, int i) {
+                ShotDetailActivity.navigate(((AppCompatActivity) getActivity()), ((Shot) o), null);
             }
         });
         mRecyclerView.setLayoutManager(manager);

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/des"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:translationZ="2dp"
+    app:cardCornerRadius="0dp"
+    tools:ignore="MissingPrefix">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/userPhoto"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="@dimen/activity_vertical_margin"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/byy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_toRightOf="@id/userPhoto"
+            android:text="by "
+            android:textColor="@color/colorPrimary"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/userName"
+            fontPath="fonts/Comfortaa-Bold.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_toRightOf="@id/byy"
+            android:text="James Shock"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/create_at"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/byy"
+            android:layout_below="@id/userName"
+            android:layout_marginTop="8dp"
+            android:text="July 4,2015"
+            android:textSize="12sp" />
+
+        <com.me.xpf.pigggeon.widget.HtmlTextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/userPhoto"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="16dp"
+            android:text="kadslhf ksjdfhskl fdsg  sdlkjfsldkjf as dslkjflsjd asldkjasdasd asdasd lkjlkjlkjljljkl iwowiowowioj"
+            android:textColor="@android:color/black"
+            android:textSize="12sp" />
+
+
+        <ImageView
+            android:id="@+id/tag_img"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_below="@id/description"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="9dp"
+            android:src="@drawable/ic_tag_48dp" />
+
+        <TextView
+            android:id="@+id/tags"
+            fontPath="fonts/Comfortaa-Bold.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/description"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/tag_img"
+            android:text="animation, gif, glitch, loop"
+            android:textColor="@color/colorPrimary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tags"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:paddingBottom="16dp">
+
+            <Button
+                android:id="@+id/create_bucket"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1"
+                android:text="+ BUCKET"
+                android:textColor="@android:color/white"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/create_comment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="16dp"
+                android:layout_weight="1"
+                android:text="+ COMMENT"
+                android:textColor="@android:color/white"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
