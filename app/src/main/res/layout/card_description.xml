@@ -9,6 +9,8 @@
     android:foreground="?android:attr/selectableItemBackground"
     android:translationZ="2dp"
     app:cardCornerRadius="0dp"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true"
     tools:ignore="MissingPrefix">
 
     <RelativeLayout
@@ -84,7 +86,8 @@
             android:layout_marginTop="8dp"
             android:layout_toRightOf="@id/tag_img"
             android:text="animation, gif, glitch, loop"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold|italic" />
 
         <LinearLayout
             android:layout_width="match_parent"

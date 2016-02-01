@@ -19,6 +19,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorButtonNormal">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.NoActionBar.Dark" parent="Theme.AppCompat.NoActionBar">

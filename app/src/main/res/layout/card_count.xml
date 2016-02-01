@@ -8,7 +8,9 @@
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:translationZ="2dp"
-    app:cardCornerRadius="0dp"
+    app:cardCornerRadius="2dp"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true"
     app:contentPaddingBottom="8dp"
     app:contentPaddingTop="8dp">
 

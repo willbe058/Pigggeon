@@ -2,12 +2,15 @@ package com.me.xpf.pigggeon.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +25,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.transcode.BitmapToGlideDrawableTranscoder;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.ViewTarget;
 import com.me.xpf.pigggeon.R;
 import com.me.xpf.pigggeon.base.activity.BaseStatusBarTintMvpActivity;
 import com.me.xpf.pigggeon.base.adapter.BaseHeaderFooterAdapter;
@@ -100,6 +110,8 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
 
     private GridLayoutManager layoutManager;
 
+    private boolean isLike = false;
+
     public static void navigate(AppCompatActivity activity, Shot shot, Userable user) {
 
         Intent intent = new Intent(activity, ShotDetailActivity.class);
@@ -119,7 +131,7 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
         if (getIntent() != null) {
             mShot = (Shot) getIntent().getSerializableExtra(SER_SHOT);
             mUser = ((Userable) getIntent().getSerializableExtra(SER_USER));
-            vibrantColor = getResources().getColor(R.color.colorAccent);
+            vibrantColor = AppData.getColor(R.color.colorAccent);
         } else {
             finish();
         }
@@ -161,7 +173,41 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
         View header = LayoutInflater.from(this).inflate(R.layout.item_header, null);
         setUpHeaderView(header);
         setUpRecyclerView(recyclerView, header);
+        setUpGifView(mShot);
         loadComments(1);
+    }
+
+    private void setUpGifView(Shot shot) {
+        collapsingToolbarLayout.setTitle(shot.getTitle());
+        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(shotImage);
+        String url;
+        if (shot.getImages().getHidpi() != null) {
+            url = shot.getImages().getHidpi();
+        } else {
+            url = shot.getImages().getNormal();
+        }
+        Glide.with(AppData.getContext())
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .thumbnail(Glide.with(AppData.getContext())
+                        .load(url)
+                        .asBitmap()
+                        .transcode(new BitmapToGlideDrawableTranscoder(AppData.getContext()), GlideDrawable.class)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL))
+                .error(R.drawable.loaderror)
+                .crossFade()
+                .into(imageViewTarget);
+
+        Glide.with(AppData.getContext())
+                .load(url)
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        Palette.from(resource).generate(palette -> applyPalette(palette));
+                    }
+                });
+
     }
 
     private void setUpHeaderView(View header) {
@@ -284,6 +330,30 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
         presenter.loadComments(mShot.getId(), page);
     }
 
+    private void applyPalette(Palette palette) {
+        int primaryDark = AppData.getColor(R.color.colorPrimaryDark);
+        int primary = AppData.getColor(R.color.colorPrimary);
+        if (SettingsUtil.isDarkMode()) {
+            collapsingToolbarLayout.setContentScrimColor(AppData.getColor(R.color.darkColorPrimary));
+            collapsingToolbarLayout.setStatusBarScrimColor(AppData.getColor(R.color.darkColorPrimaryDark));
+        } else {
+            collapsingToolbarLayout.setContentScrimColor(palette.getVibrantColor(primary));
+            collapsingToolbarLayout.setStatusBarScrimColor(palette.getVibrantColor(primaryDark));
+        }
+        updateBackground(likeFab, palette);
+        supportStartPostponedEnterTransition();
+    }
+
+    private void updateBackground(FloatingActionButton fab, Palette palette) {
+        int lightVibrantColor = palette.getLightVibrantColor(AppData.getColor(android.R.color.white));
+        vibrantColor = palette.getMutedColor(AppData.getColor(R.color.colorAccent));
+
+        if (!isLike) {
+            fab.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
+        }
+
+    }
+
     @NonNull
     @Override
     public ShotDetailPresenter createPresenter() {
@@ -303,6 +373,7 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     public void setCommentList(List<Comment> commentList) {
         if (commentList.size() != 0) {
             this.dataSet = commentList;
+            dataSet.add(new Comment());
             adapter.clearData();
             adapter.setData(dataSet);
             adapter.onUpdateFinished();
