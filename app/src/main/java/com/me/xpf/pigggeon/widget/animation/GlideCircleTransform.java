@@ -9,10 +9,15 @@ import android.graphics.Paint;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+
 /**
  * Created by pengfeixie on 16/1/29.
  */
 public class GlideCircleTransform extends BitmapTransformation {
+    private static final String ID = "GlideCircleTransform.fuck";
+
     public GlideCircleTransform(Context context) {
         super(context);
     }
@@ -43,7 +48,21 @@ public class GlideCircleTransform extends BitmapTransformation {
     }
 
     @Override
-    public String getId() {
-        return getClass().getName();
+    public int hashCode() {
+        return ID.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof GlideCircleTransform;
+    }
+
+    @Override
+    public void updateDiskCacheKey(MessageDigest messageDigest) {
+        try {
+            messageDigest.update(ID.getBytes(STRING_CHARSET_NAME));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 }

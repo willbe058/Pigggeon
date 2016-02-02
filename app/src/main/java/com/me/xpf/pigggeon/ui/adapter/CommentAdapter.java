@@ -11,8 +11,8 @@ import com.bumptech.glide.Glide;
 import com.me.xpf.pigggeon.R;
 import com.me.xpf.pigggeon.base.adapter.BaseHeaderFooterAdapter;
 import com.me.xpf.pigggeon.model.api.Comment;
-import com.me.xpf.pigggeon.model.api.Shot;
 import com.me.xpf.pigggeon.model.api.User;
+import com.me.xpf.pigggeon.ui.activity.ShotDetailActivity;
 import com.me.xpf.pigggeon.utils.SettingsUtil;
 import com.me.xpf.pigggeon.widget.animation.GlideCircleTransform;
 import com.xpf.me.architect.app.AppData;
@@ -27,6 +27,8 @@ import java.util.List;
 public class CommentAdapter extends BaseHeaderFooterAdapter<Comment> implements View.OnClickListener {
 
     private int avatarSize;
+
+    private ShotDetailActivity.TEST test = new ShotDetailActivity.TEST();
 
     private String[] re;
 
@@ -101,10 +103,10 @@ public class CommentAdapter extends BaseHeaderFooterAdapter<Comment> implements 
         holder.setText(R.id.like_count, String.valueOf(item.getLikesCount()));
 
         Glide.with(mContext).load(item.getUser().getAvatarUrl())
-                .override(avatarSize, avatarSize)
-                .placeholder(R.drawable.ic_avatar_default)
-                .centerCrop()
-                .transform(new GlideCircleTransform(mContext))
+                .apply(test.placeholder(R.drawable.ic_avatar_default)
+                        .centerCrop(AppData.getContext())
+                        .override(avatarSize, avatarSize)
+                        .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext())))
                 .into(((ImageView) holder.getView(R.id.user_photo)));
 
         holder.getView(R.id.user_photo).setId(R.id.user_photo);

@@ -83,6 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/description"
             android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:layout_toRightOf="@id/tag_img"
             android:text="animation, gif, glitch, loop"

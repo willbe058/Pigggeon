@@ -5,13 +5,16 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.BaseRequestOptions;
 import com.me.xpf.pigggeon.R;
 import com.me.xpf.pigggeon.config.Config;
 import com.me.xpf.pigggeon.model.api.Shot;
+import com.me.xpf.pigggeon.ui.activity.ShotDetailActivity;
 import com.me.xpf.pigggeon.utils.PreferenceUtil;
 import com.me.xpf.pigggeon.utils.SettingsUtil;
 import com.me.xpf.pigggeon.widget.PigggeonLoadAnimationView;
 import com.me.xpf.pigggeon.widget.animation.GlideCircleTransform;
+import com.xpf.me.architect.app.AppData;
 import com.xpf.me.architect.recyclerview.BaseAdapter;
 import com.xpf.me.architect.recyclerview.RecyclerHolder;
 
@@ -24,6 +27,8 @@ import java.util.List;
 public class ShotsAdapter extends BaseAdapter<Shot> {
 
     private int avatarSize;
+
+    private ShotDetailActivity.TEST test = new ShotDetailActivity.TEST();
 
     public void setData(List<Shot> shotList) {
         this.realData = shotList;
@@ -72,19 +77,19 @@ public class ShotsAdapter extends BaseAdapter<Shot> {
             recyclerHolder.setText(R.id.user_name, shot.getTeam().getName());
             Glide.with(mContext)
                     .load(shot.getTeam().getAvatarUrl())
-                    .override(avatarSize, avatarSize)
-                    .placeholder(R.drawable.ic_avatar_default)
-                    .centerCrop()
-                    .transform(new GlideCircleTransform(mContext))
+                    .apply(test.centerCrop(AppData.getContext())
+                            .override(avatarSize, avatarSize)
+                            .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext()))
+                            .placeholder(R.drawable.ic_avatar_default))
                     .into(((ImageView) recyclerHolder.getView(R.id.user_photo)));
         } else {
             recyclerHolder.setText(R.id.user_name, shot.getUser().getName());
             Glide.with(mContext)
                     .load(shot.getUser().getAvatarUrl())
-                    .override(avatarSize, avatarSize)
-                    .placeholder(R.drawable.ic_avatar_default)
-                    .centerCrop()
-                    .transform(new GlideCircleTransform(mContext))
+                    .apply(test.centerCrop(AppData.getContext())
+                            .override(avatarSize, avatarSize)
+                            .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext()))
+                            .placeholder(R.drawable.ic_avatar_default))
                     .into(((ImageView) recyclerHolder.getView(R.id.user_photo)));
         }
         recyclerHolder.setText(R.id.shot_name, shot.getTitle());
@@ -99,7 +104,8 @@ public class ShotsAdapter extends BaseAdapter<Shot> {
         }
         Glide.with(mContext)
                 .load(shot.getImages().getTeaser())
-                .placeholder(R.drawable.loading)
+                .apply(test.centerCrop(AppData.getContext())
+                        .placeholder(R.drawable.loading))
                 .into(((ImageView) recyclerHolder.getView(R.id.shot_photo)));
     }
 }

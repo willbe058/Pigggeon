@@ -23,8 +23,8 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.me.xpf.pigggeon.R;
 import com.me.xpf.pigggeon.app.PigggeonApp;
@@ -352,19 +352,18 @@ public class MainActivity extends BaseStatusBarTintActivity {
                             userBio.setText(user.getBio() != null ? user.getBio() : "");
                             Glide.with(AppData.getContext())
                                     .load(user.getAvatarUrl())
-                                    .override(avatarSize, avatarSize)
-                                    .centerCrop()
-                                    .transform(new GlideCircleTransform(AppData.getContext()))
+                                    .apply(new ShotDetailActivity.TEST()
+                                            .override(avatarSize, avatarSize)
+                                            .centerCrop(AppData.getContext())
+                                            .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext())))
                                     .into(header);
 
-
                             Glide.with(AppData.getContext())
-                                    .load(user.getAvatarUrl())
                                     .asBitmap()
-                                    .into(new SimpleTarget<Bitmap>(100, 100) {
+                                    .load(user.getAvatarUrl())
+                                    .into(new SimpleTarget<Bitmap>() {
                                         @Override
-                                        public void onResourceReady(Bitmap resource,
-                                                                    GlideAnimation<? super Bitmap> glideAnimation) {
+                                        public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
                                             blurBack.setImageBitmap(resource);
                                             Blurry.with(AppData.getContext()).capture(blurBack).into(blurBack);
                                         }
