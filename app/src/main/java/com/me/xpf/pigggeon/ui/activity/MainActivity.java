@@ -3,6 +3,7 @@ package com.me.xpf.pigggeon.ui.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -15,11 +16,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
@@ -351,8 +354,9 @@ public class MainActivity extends BaseStatusBarTintActivity {
                             userName.setText(user.getName());
                             userBio.setText(user.getBio() != null ? user.getBio() : "");
                             Glide.with(AppData.getContext())
+                                    .asDrawable()
                                     .load(user.getAvatarUrl())
-                                    .apply(new ShotDetailActivity.TEST()
+                                    .apply(new ShotDetailActivity.MyRequestOptions()
                                             .override(avatarSize, avatarSize)
                                             .centerCrop(AppData.getContext())
                                             .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext())))
@@ -451,6 +455,23 @@ public class MainActivity extends BaseStatusBarTintActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean isExit;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (isExit) {
+                this.finish();
+            } else {
+                Toast.makeText(this, "Press back again to exit", Toast.LENGTH_LONG).show();
+                isExit = true;
+                new Handler().postDelayed(() -> isExit = false, 2000);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     static class Adapter extends FragmentPagerAdapter {
 
         private final List<Fragment> mFragments = new ArrayList<>();
@@ -487,4 +508,6 @@ public class MainActivity extends BaseStatusBarTintActivity {
             return s;
         }
     }
+
+
 }

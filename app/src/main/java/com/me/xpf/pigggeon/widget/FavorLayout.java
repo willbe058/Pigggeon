@@ -87,11 +87,11 @@ public class FavorLayout extends FrameLayout {
         //  ????????????????
         drawables = new Drawable[6];
         red = getResources().getDrawable(R.drawable.ballred_36dp);
-        yellow = getResources().getDrawable(R.drawable.ballgreen_36dp);
-        blue = getResources().getDrawable(R.drawable.ballblue_36dp);
+        yellow = getResources().getDrawable(R.drawable.ballred_36dp);
+        blue = getResources().getDrawable(R.drawable.ballred_36dp);
         pigggeon1 = getResources().getDrawable(R.drawable.love_36dp);
-        pigggeon2 = getResources().getDrawable(R.drawable.loveblue_36dp);
-        pigggeon3 = getResources().getDrawable(R.drawable.lovegreen_36dp);
+        pigggeon2 = getResources().getDrawable(R.drawable.love_36dp);
+        pigggeon3 = getResources().getDrawable(R.drawable.love_36dp);
 
         drawables[0] = red;
         drawables[1] = yellow;

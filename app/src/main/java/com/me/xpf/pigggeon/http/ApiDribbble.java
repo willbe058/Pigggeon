@@ -4,6 +4,7 @@ import com.me.xpf.pigggeon.app.PigggeonApp;
 import com.me.xpf.pigggeon.config.Constant;
 import com.me.xpf.pigggeon.model.api.AccessToken;
 import com.me.xpf.pigggeon.model.api.Comment;
+import com.me.xpf.pigggeon.model.api.Like;
 import com.me.xpf.pigggeon.model.api.Shot;
 import com.me.xpf.pigggeon.model.api.User;
 
@@ -15,6 +16,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.RxJavaCallAdapterFactory;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -102,6 +104,15 @@ public class ApiDribbble implements Constant {
                 @Path("id") int id,
                 @Query(PAGE) int page,
                 @Query(PER_PAGE) int perPage);
+
+        @GET("shots/{id}/like")
+        Observable<Like> isLike(@Path("id") int id);
+
+        @POST("shots/{id}/like")
+        Observable<Like> like(@Path("id") int id);
+
+        @DELETE("shots/{id}/like")
+        Observable<Like> unlike(@Path("id") int id);
     }
 
 }

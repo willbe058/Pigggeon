@@ -125,6 +125,7 @@ public class ShotsFragment extends BaseRecyclerViewMvpFragment<ShotsView, ShotsP
             @Override
             public void onItemClick(View view, Object o, int i) {
                 ShotDetailActivity.navigate(((AppCompatActivity) getActivity()), ((Shot) o), null);
+                getActivity().overridePendingTransition(R.anim.move_right_in, R.anim.move_left_out);
             }
         });
         mRecyclerView.setLayoutManager(manager);

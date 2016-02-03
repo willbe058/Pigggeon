@@ -42,7 +42,7 @@
         <activity
             android:name=".ui.activity.ShotDetailActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".ui.activity.MainActivity"/>
+            />
     </application>
 
 </manifest>

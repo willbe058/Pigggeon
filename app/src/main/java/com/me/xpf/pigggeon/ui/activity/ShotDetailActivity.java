@@ -1,5 +1,9 @@
 package com.me.xpf.pigggeon.ui.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -17,15 +21,20 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.request.BaseRequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -35,9 +44,11 @@ import com.me.xpf.pigggeon.base.adapter.BaseHeaderFooterAdapter;
 import com.me.xpf.pigggeon.event.BusProvider;
 import com.me.xpf.pigggeon.model.api.Bucket;
 import com.me.xpf.pigggeon.model.api.Comment;
+import com.me.xpf.pigggeon.model.api.Like;
 import com.me.xpf.pigggeon.model.api.Shot;
 import com.me.xpf.pigggeon.model.api.User;
 import com.me.xpf.pigggeon.model.api.Userable;
+import com.me.xpf.pigggeon.model.usecase.LikeUsecase;
 import com.me.xpf.pigggeon.presenter.ShotDetailPresenter;
 import com.me.xpf.pigggeon.ui.adapter.CommentAdapter;
 import com.me.xpf.pigggeon.utils.SettingsUtil;
@@ -55,6 +66,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Subscriber;
 
 /**
  * Created by pengfeixie on 16/1/31.
@@ -69,7 +81,13 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
 
     private static final String SER_USER = "serializable.user";
 
+    private AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
+
+    private OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
+
     protected MvpFragment.OnUpdateListener updateListener;
+
+    private LikeUsecase likeUsecase = new LikeUsecase();
 
     private Shot mShot;
 
@@ -103,8 +121,6 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     private List<Comment> dataSet = new ArrayList<>();
 
     private CommentAdapter adapter;
-
-    private GridLayoutManager layoutManager;
 
     private boolean isLike = false;
 
@@ -154,7 +170,7 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     @Override
     protected void setupActionBar() {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -163,7 +179,7 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
         super.setupViews();
         avatarSize = getResources().getDimensionPixelSize(R.dimen.user_photo);
         likeFab.setEnabled(false);
-//        checkIfLiked();
+        checkIfLiked();
         likeFab.setOnClickListener(this);
         progressBar.setVisibility(View.VISIBLE);
         View header = LayoutInflater.from(this).inflate(R.layout.item_header, null);
@@ -173,9 +189,42 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
         loadComments(1);
     }
 
+    /**
+     * check if user already like the shot
+     */
+    private void checkIfLiked() {
+        likeUsecase.isLike(mShot.getId())
+                .subscribe(new Subscriber<Like>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (likeFab != null) {
+                            isLike = false;
+                            likeFab.setImageResource(R.drawable.ic_favorite_white_48dp);
+                            likeFab.setEnabled(true);
+                        }
+                    }
+
+                    @Override
+                    public void onNext(Like like) {
+                        if (likeFab != null) {
+                            if (like != null) {
+                                isLike = true;
+                                likeFab.setImageResource(R.drawable.ic_favorite_pink_48dp);
+                                likeFab.setBackgroundTintList(ColorStateList.valueOf(AppData.getColor(R.color.darkTextTitle)));
+                                likeFab.setEnabled(true);
+                            }
+                        }
+                    }
+                });
+    }
+
     private void setUpGifView(Shot shot) {
         collapsingToolbarLayout.setTitle(shot.getTitle());
-//        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(shotImage);
         String url;
         if (shot.getImages().getHidpi() != null) {
             url = shot.getImages().getHidpi();
@@ -244,7 +293,7 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
         if (mShot.getUser() != null) {
             Glide.with(AppData.getContext()).asDrawable()
                     .load(mShot.getUser().getAvatarUrl())
-                    .apply(new TEST().centerCrop(AppData.getContext())
+                    .apply(new MyRequestOptions().centerCrop(AppData.getContext())
                             .override(avatarSize, avatarSize)
                             .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext()))
                             .placeholder(R.drawable.ic_avatar_default))
@@ -254,7 +303,7 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
 
             Glide.with(AppData.getContext())
                     .load(mUser.getAvatarUrl())
-                    .apply(new TEST().centerCrop(AppData.getContext())
+                    .apply(new MyRequestOptions().centerCrop(AppData.getContext())
                             .override(avatarSize, avatarSize)
                             .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext()))
                             .placeholder(R.drawable.ic_avatar_default))
@@ -301,7 +350,7 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     }
 
     protected void setUpRecyclerView(RecyclerView recyclerView, View header) {
-        layoutManager = new GridLayoutManager(this, 1, GridLayoutManager.VERTICAL, false);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 1, GridLayoutManager.VERTICAL, false);
         adapter = new CommentAdapter(recyclerView, dataSet, header);
         adapter.setOnAvatarClickListner(this);
         adapter.setOnCommentClickListener(this);
@@ -343,13 +392,75 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
         vibrantColor = palette.getMutedColor(AppData.getColor(R.color.colorAccent));
 
         if (!isLike) {
-            fab.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
+            if (fab != null) {
+                fab.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
+            }
         }
+    }
+
+    public static class MyRequestOptions extends BaseRequestOptions {
 
     }
 
-    public static class TEST extends BaseRequestOptions {
+    private void startLikeAnimation(final FloatingActionButton fab) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(fab, "rotation", 0f, 360f);
+        rotationAnim.setDuration(300);
+        rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
 
+        ObjectAnimator bounceAnimX = ObjectAnimator.ofFloat(fab, "scaleX", 0.2f, 1f);
+        bounceAnimX.setDuration(300);
+        bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR);
+
+        ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(fab, "scaleY", 0.2f, 1f);
+        bounceAnimY.setDuration(300);
+        bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
+        bounceAnimY.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                fab.setImageResource(R.drawable.ic_favorite_pink_48dp);
+                fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkTextTitle)));
+                fab.setEnabled(false);
+            }
+        });
+        animatorSet.play(rotationAnim);
+        animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
+        animatorSet.start();
+    }
+
+    private void startUnLikeAnimation(final FloatingActionButton fab) {
+        AnimatorSet animatorSet = new AnimatorSet();
+        ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(fab, "rotation", 0f, 360f);
+        rotationAnim.setDuration(300);
+        rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
+
+        ObjectAnimator bounceAnimX = ObjectAnimator.ofFloat(fab, "scaleX", 0.2f, 1f);
+        bounceAnimX.setDuration(300);
+        bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR);
+
+        ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(fab, "scaleY", 0.2f, 1f);
+        bounceAnimY.setDuration(300);
+        bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
+        bounceAnimY.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                fab.setImageResource(R.drawable.ic_favorite_white_48dp);
+                fab.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
+                fab.setEnabled(false);
+            }
+        });
+
+        animatorSet.play(rotationAnim);
+        animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
+
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+//                resetLikeAnimationState(item);
+            }
+        });
+
+        animatorSet.start();
     }
 
     @NonNull
@@ -420,6 +531,62 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.fab:
+                if (!isLike) {
+                    startLikeAnimation(likeFab);
+                    for (int i = 0; i < 7; i++) {
+                        favorLayout.addFavor();
+                    }
+                    likeUsecase.like(mShot.getId())
+                            .subscribe(new Subscriber<Like>() {
+                                @Override
+                                public void onCompleted() {
+
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Toast.makeText(ShotDetailActivity.this, "error like", Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onNext(Like like) {
+                                    if (likeFab != null) {
+                                        if (like != null) {
+                                            isLike = true;
+                                            likeFab.setEnabled(true);
+                                        }
+                                    }
+                                }
+                            });
+                } else {
+                    startUnLikeAnimation(likeFab);
+                    likeUsecase.unLike(mShot.getId())
+                            .subscribe(new Subscriber<Like>() {
+                                @Override
+                                public void onCompleted() {
+
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Toast.makeText(ShotDetailActivity.this, "error unlike", Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onNext(Like like) {
+                                    if (likeFab != null) {
+                                        if (like == null) {
+                                            isLike = false;
+                                            likeFab.setEnabled(true);
+                                        }
+                                    }
+                                }
+                            });
+                }
+                break;
+        }
 
     }
 
@@ -431,5 +598,32 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     @Override
     public void onClickComment(View v, Comment comment) {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case android.R.id.home:
+                finish();
+                overridePendingTransition(R.anim.move_left_in, R.anim.move_right_out);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_shot_detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish();
+            overridePendingTransition(R.anim.move_left_in, R.anim.move_right_out);
+        }
+        return false;
     }
 }

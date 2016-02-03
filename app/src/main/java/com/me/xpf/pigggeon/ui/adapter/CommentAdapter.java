@@ -28,7 +28,7 @@ public class CommentAdapter extends BaseHeaderFooterAdapter<Comment> implements 
 
     private int avatarSize;
 
-    private ShotDetailActivity.TEST test = new ShotDetailActivity.TEST();
+    private ShotDetailActivity.MyRequestOptions myRequestOptions = new ShotDetailActivity.MyRequestOptions();
 
     private String[] re;
 
@@ -102,8 +102,9 @@ public class CommentAdapter extends BaseHeaderFooterAdapter<Comment> implements 
         holder.setText(R.id.create_date, re[0]);
         holder.setText(R.id.like_count, String.valueOf(item.getLikesCount()));
 
-        Glide.with(mContext).load(item.getUser().getAvatarUrl())
-                .apply(test.placeholder(R.drawable.ic_avatar_default)
+        Glide.with(mContext).asDrawable()
+                .load(item.getUser().getAvatarUrl())
+                .apply(myRequestOptions.placeholder(R.drawable.ic_avatar_default)
                         .centerCrop(AppData.getContext())
                         .override(avatarSize, avatarSize)
                         .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext())))
