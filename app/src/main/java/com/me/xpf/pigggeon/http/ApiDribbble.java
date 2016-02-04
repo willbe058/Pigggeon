@@ -3,6 +3,7 @@ package com.me.xpf.pigggeon.http;
 import com.me.xpf.pigggeon.app.PigggeonApp;
 import com.me.xpf.pigggeon.config.Constant;
 import com.me.xpf.pigggeon.model.api.AccessToken;
+import com.me.xpf.pigggeon.model.api.Bucket;
 import com.me.xpf.pigggeon.model.api.Comment;
 import com.me.xpf.pigggeon.model.api.Like;
 import com.me.xpf.pigggeon.model.api.Shot;
@@ -113,6 +114,13 @@ public class ApiDribbble implements Constant {
 
         @DELETE("shots/{id}/like")
         Observable<Like> unlike(@Path("id") int id);
+
+        @GET("user/buckets")
+        Observable<List<Bucket>> buckets();
+
+        @GET("buckets/{id}/shots")
+        Observable<List<Shot>> getBucketImage(@Path("id") int id, @Query(PER_PAGE) int perPage);
+
     }
 
 }

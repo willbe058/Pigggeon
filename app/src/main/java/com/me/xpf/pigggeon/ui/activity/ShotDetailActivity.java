@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -34,6 +35,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.BaseRequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -42,20 +44,24 @@ import com.me.xpf.pigggeon.R;
 import com.me.xpf.pigggeon.base.activity.BaseStatusBarTintMvpActivity;
 import com.me.xpf.pigggeon.base.adapter.BaseHeaderFooterAdapter;
 import com.me.xpf.pigggeon.event.BusProvider;
+import com.me.xpf.pigggeon.model.BucketWrapper;
 import com.me.xpf.pigggeon.model.api.Bucket;
 import com.me.xpf.pigggeon.model.api.Comment;
 import com.me.xpf.pigggeon.model.api.Like;
 import com.me.xpf.pigggeon.model.api.Shot;
 import com.me.xpf.pigggeon.model.api.User;
 import com.me.xpf.pigggeon.model.api.Userable;
+import com.me.xpf.pigggeon.model.usecase.BucketsUsecase;
 import com.me.xpf.pigggeon.model.usecase.LikeUsecase;
 import com.me.xpf.pigggeon.presenter.ShotDetailPresenter;
+import com.me.xpf.pigggeon.ui.adapter.BucketAdapter;
 import com.me.xpf.pigggeon.ui.adapter.CommentAdapter;
 import com.me.xpf.pigggeon.utils.SettingsUtil;
 import com.me.xpf.pigggeon.view.ShotDetailView;
 import com.me.xpf.pigggeon.widget.FavorLayout;
 import com.me.xpf.pigggeon.widget.HtmlTextView;
 import com.me.xpf.pigggeon.widget.MarginDecoration;
+import com.me.xpf.pigggeon.widget.MyLinearLayoutManager;
 import com.me.xpf.pigggeon.widget.SquareImageView;
 import com.me.xpf.pigggeon.widget.animation.GlideCircleTransform;
 import com.xpf.me.architect.app.AppData;
@@ -118,6 +124,10 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     @Bind(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
 
+    private BucketAdapter bucketAdapter;
+
+    private MaterialDialog progress;
+
     private List<Comment> dataSet = new ArrayList<>();
 
     private CommentAdapter adapter;
@@ -177,6 +187,11 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     @Override
     protected void setupViews() {
         super.setupViews();
+        progress = new MaterialDialog.Builder(this)
+                .title("Please wait...")
+                .cancelable(false)
+                .progress(true, 0)
+                .build();
         avatarSize = getResources().getDimensionPixelSize(R.dimen.user_photo);
         likeFab.setEnabled(false);
         checkIfLiked();
@@ -472,8 +487,9 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     @Override
     public void progress(boolean isShow) {
         if (isShow) {
-
+            progress.show();
         } else {
+            progress.dismiss();
             progressBar.setVisibility(View.GONE);
         }
     }
@@ -513,8 +529,46 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     }
 
     @Override
-    public void setBucketList(List<Bucket> bucketList) {
+    public void setBucketList(List<BucketWrapper> bucketList) {
+        GridLayoutManager manager = new GridLayoutManager(this, 1, GridLayoutManager.VERTICAL, true);
+        final MaterialDialog materialDialog = new MaterialDialog.Builder(this)
+                .title(getResources().getString(R.string.add_bucket))
+                .customView(R.layout.dialog_bucket_list, true)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+                        List<Bucket> chosenBuckets = new ArrayList<Bucket>();
+                        for (int i = 0; i < bucketAdapter.getBuckets().size(); ++i) {
+                            if (bucketAdapter.getBuckets().get(i).getmBucket().isChecked()) {
+                                chosenBuckets.add(bucketAdapter.getBuckets().get(i).getmBucket());
+                            }
+                        }
+                        if (chosenBuckets.size() == 0) {
+                            dialog.dismiss();
+                        } else {
+//                            addBucketPresenter.onClickAddButton(chosenBuckets, shot.getId());
+                        }
 
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        super.onNegative(dialog);
+//                        addBucketPresenter.onClickCreateNewButton();
+                    }
+                })
+                .positiveText(getResources().getString(R.string.done))
+                .negativeText(getResources().getString(R.string.create_new_bucket)).build();
+
+        RecyclerView bucketRecyclerview = ((RecyclerView) materialDialog.getCustomView().findViewById(R.id.bucket_list));
+        bucketAdapter = new BucketAdapter(bucketRecyclerview, bucketList);
+        bucketRecyclerview = ((RecyclerView) materialDialog.getCustomView().findViewById(R.id.bucket_list));
+        bucketRecyclerview.setHasFixedSize(true);
+        bucketRecyclerview.setLayoutManager(manager);
+        bucketRecyclerview.setAdapter(bucketAdapter);
+        bucketRecyclerview.clearOnScrollListeners();
+        materialDialog.show();
     }
 
     @Override
@@ -585,6 +639,9 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
                                 }
                             });
                 }
+                break;
+            case R.id.create_bucket:
+                presenter.loadBuckets();
                 break;
         }
 
