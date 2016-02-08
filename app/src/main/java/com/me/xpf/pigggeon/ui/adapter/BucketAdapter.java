@@ -72,30 +72,22 @@ public class BucketAdapter extends BaseAdapter<BucketWrapper> implements View.On
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Log.i("bucket t", String.valueOf(isChecked));
-                    Log.i("bucket t", String.valueOf(positionSet.contains(buttonView.getTag())));
                     positionSet.add(((Integer) buttonView.getTag()));
                     bucketWrapper.getmBucket().setIsChecked(positionSet.contains(buttonView.getTag()));
 
                 } else {
-                    Log.i("bucket false", String.valueOf(!isChecked));
-                    Log.i("bucket false", String.valueOf(!positionSet.contains(buttonView.getTag())));
-
                     positionSet.remove((buttonView.getTag()));
                     bucketWrapper.getmBucket().setIsChecked(positionSet.contains(buttonView.getTag()));
                 }
             }
         });
 
-        recyclerHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //never do it again! the checkbox find by id isn't the same one, so onCheckedChangeListener didn't work
-//                CheckBox cb = ((CheckBox) v.findViewById(R.id.check));
+        recyclerHolder.itemView.setOnClickListener(v -> {
+            //never do it again! the checkbox find by id isn't the same one, so onCheckedChangeListener didn't work
+            //CheckBox cb = ((CheckBox) v.findViewById(R.id.check));
 
-                //this is the right way to do
-                (((CheckBox) recyclerHolder.getView(R.id.check))).setChecked(!((CheckBox) recyclerHolder.getView(R.id.check)).isChecked());
-            }
+            //this is the right way to do
+            (((CheckBox) recyclerHolder.getView(R.id.check))).setChecked(!((CheckBox) recyclerHolder.getView(R.id.check)).isChecked());
         });
     }
 

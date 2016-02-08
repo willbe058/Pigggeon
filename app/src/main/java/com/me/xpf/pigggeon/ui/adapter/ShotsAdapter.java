@@ -3,6 +3,7 @@ package com.me.xpf.pigggeon.ui.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.me.xpf.pigggeon.R;
@@ -68,12 +69,21 @@ public class ShotsAdapter extends BaseAdapter<Shot> {
 
     @Override
     public void convert(RecyclerHolder recyclerHolder, Shot shot, int i, boolean b) {
+        TextView userName = recyclerHolder.getView(R.id.user_name);
+        ImageView userPhoto = recyclerHolder.getView(R.id.user_photo);
+        TextView shotName = recyclerHolder.getView(R.id.shot_name);
+        TextView textView = recyclerHolder.getView(R.id.textView);
+        TextView textComment = recyclerHolder.getView(R.id.textComment);
+        TextView textLike = recyclerHolder.getView(R.id.textLike);
+        ImageView gifLogo = recyclerHolder.getView(R.id.gif_logo);
+        ImageView shotPhoto = recyclerHolder.getView(R.id.shot_photo);
+
         if (SettingsUtil.isDarkMode()) {
 
         }
 
         if (PreferenceUtil.getPreString(Config.PRE_SHOT_KEY, "").equals("teams")) {
-            recyclerHolder.setText(R.id.user_name, shot.getTeam().getName());
+            userName.setText(shot.getTeam().getName());
             Glide.with(mContext)
                     .asDrawable()
                     .load(shot.getTeam().getAvatarUrl())
@@ -81,9 +91,9 @@ public class ShotsAdapter extends BaseAdapter<Shot> {
                             .override(avatarSize, avatarSize)
                             .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext()))
                             .placeholder(R.drawable.ic_avatar_default))
-                    .into(((ImageView) recyclerHolder.getView(R.id.user_photo)));
+                    .into(userPhoto);
         } else {
-            recyclerHolder.setText(R.id.user_name, shot.getUser().getName());
+            userName.setText(shot.getUser().getName());
             Glide.with(mContext)
                     .asDrawable()
                     .load(shot.getUser().getAvatarUrl())
@@ -91,23 +101,23 @@ public class ShotsAdapter extends BaseAdapter<Shot> {
                             .override(avatarSize, avatarSize)
                             .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext()))
                             .placeholder(R.drawable.ic_avatar_default))
-                    .into(((ImageView) recyclerHolder.getView(R.id.user_photo)));
+                    .into(userPhoto);
         }
-        recyclerHolder.setText(R.id.shot_name, shot.getTitle());
-        recyclerHolder.setText(R.id.textView, String.valueOf(shot.getViewsCount()));
-        recyclerHolder.setText(R.id.textComment, String.valueOf(shot.getCommentsCount()));
-        recyclerHolder.setText(R.id.textLike, String.valueOf(shot.getLikesCount()));
+        shotName.setText(shot.getTitle());
+        textView.setText(shot.getViewsCount());
+        textComment.setText(shot.getCommentsCount());
+        textLike.setText(shot.getLikesCount());
 
         if (shot.isGif()) {
-            recyclerHolder.getView(R.id.gif_logo).setVisibility(View.VISIBLE);
+            gifLogo.setVisibility(View.VISIBLE);
         } else {
-            recyclerHolder.getView(R.id.gif_logo).setVisibility(View.GONE);
+            gifLogo.setVisibility(View.GONE);
         }
         Glide.with(mContext)
                 .asDrawable()
                 .load(shot.getImages().getTeaser())
                 .apply(myRequestOptions.centerCrop(AppData.getContext())
                         .placeholder(R.drawable.loading))
-                .into(((ImageView) recyclerHolder.getView(R.id.shot_photo)));
+                .into(shotPhoto);
     }
 }
