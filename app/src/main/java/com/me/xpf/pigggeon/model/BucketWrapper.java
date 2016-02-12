@@ -7,9 +7,19 @@ import com.me.xpf.pigggeon.model.api.Bucket;
  */
 public class BucketWrapper {
 
+    private int id;
+
     private Bucket mBucket;
 
     private String mImageUrl;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getmImageUrl() {
         return mImageUrl;

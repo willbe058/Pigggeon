@@ -31,7 +31,8 @@ public class BucketsUsecase {
 
     public Observable<List<Bucket>> execute() {
         Observable<List<Bucket>> observable = ApiDribbble.dribbble()
-                .buckets();
+                .buckets().observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread());
 
         return observable;
 

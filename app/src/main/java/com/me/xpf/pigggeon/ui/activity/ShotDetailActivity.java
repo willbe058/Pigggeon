@@ -56,6 +56,7 @@ import com.me.xpf.pigggeon.model.usecase.LikeUsecase;
 import com.me.xpf.pigggeon.presenter.ShotDetailPresenter;
 import com.me.xpf.pigggeon.ui.adapter.BucketAdapter;
 import com.me.xpf.pigggeon.ui.adapter.CommentAdapter;
+import com.me.xpf.pigggeon.ui.adapter.NewBucketAdapter;
 import com.me.xpf.pigggeon.utils.SettingsUtil;
 import com.me.xpf.pigggeon.view.ShotDetailView;
 import com.me.xpf.pigggeon.widget.FavorLayout;
@@ -124,7 +125,7 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     @Bind(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
 
-    private BucketAdapter bucketAdapter;
+    private NewBucketAdapter bucketAdapter;
 
     private MaterialDialog progress;
 
@@ -165,6 +166,7 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     protected void onDestroy() {
         super.onDestroy();
         BusProvider.getInstance().unregister(this);
+        progress.dismiss();
     }
 
     @Override
@@ -530,10 +532,10 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
 
     @Override
     public void setBucketList(List<BucketWrapper> bucketList) {
-        GridLayoutManager manager = new GridLayoutManager(this, 1, GridLayoutManager.VERTICAL, true);
+        MyLinearLayoutManager manager = new MyLinearLayoutManager(this, 1, true);
         final MaterialDialog materialDialog = new MaterialDialog.Builder(this)
                 .title(getResources().getString(R.string.add_bucket))
-                .customView(R.layout.dialog_bucket_list, true)
+                .customView(R.layout.dialog_bucket_list, false)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
@@ -561,13 +563,11 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
                 .positiveText(getResources().getString(R.string.done))
                 .negativeText(getResources().getString(R.string.create_new_bucket)).build();
 
-        RecyclerView bucketRecyclerview = ((RecyclerView) materialDialog.getCustomView().findViewById(R.id.bucket_list));
-        bucketAdapter = new BucketAdapter(bucketRecyclerview, bucketList);
-        bucketRecyclerview = ((RecyclerView) materialDialog.getCustomView().findViewById(R.id.bucket_list));
-        bucketRecyclerview.setHasFixedSize(true);
-        bucketRecyclerview.setLayoutManager(manager);
-        bucketRecyclerview.setAdapter(bucketAdapter);
-        bucketRecyclerview.clearOnScrollListeners();
+        RecyclerView bucketRecyclerView = ((RecyclerView) materialDialog.getCustomView().findViewById(R.id.bucket_list));
+        bucketAdapter = new NewBucketAdapter(this, bucketList);
+        bucketRecyclerView.setHasFixedSize(true);
+        bucketRecyclerView.setLayoutManager(manager);
+        bucketRecyclerView.setAdapter(bucketAdapter);
         materialDialog.show();
     }
 

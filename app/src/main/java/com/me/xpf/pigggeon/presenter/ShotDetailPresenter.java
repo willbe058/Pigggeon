@@ -2,6 +2,7 @@ package com.me.xpf.pigggeon.presenter;
 
 import android.util.Log;
 
+import com.me.xpf.pigggeon.helper.BucketManager;
 import com.me.xpf.pigggeon.http.ApiDribbble;
 import com.me.xpf.pigggeon.model.BucketWrapper;
 import com.me.xpf.pigggeon.model.api.Bucket;
@@ -29,60 +30,70 @@ public class ShotDetailPresenter extends BasePresenter<ShotDetailView> {
 
     private CommentUsecase commentUsecase = new CommentUsecase();
 
-    private BucketsUsecase bucketsUsecase = new BucketsUsecase();
-
-    private List<BucketWrapper> wrappers = new ArrayList<>();
-
-    private List<Bucket> tempBuckets = new ArrayList<>();
-
-    private List<String> tempUrls = new ArrayList<>();
 
     public void loadBuckets() {
         if (getView() != null) {
             getView().progress(true);
         }
-        bucketsUsecase.execute().flatMap(buckets -> {
-            this.tempBuckets = buckets;
-            return Observable.from(buckets);
-        })
-                .concatMap(bucket -> ApiDribbble.dribbble().getBucketImage(bucket.getId(), 1))
-                .concatMap(shots -> {
-                    if (shots.size() == 0) {
-                        tempUrls.add(null);
-                    } else {
-                        tempUrls.add(shots.get(0).getImages().getTeaser());
-                    }
-                    return Observable.from(shots);
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Shot>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.i("buceks", tempBuckets.get(0).getName());
-                        Log.i("urls", Arrays.toString(tempUrls.toArray()));
-                        for (int i = 0; i < tempBuckets.size(); i++) {
-                            BucketWrapper wrapper = new BucketWrapper();
-                            wrapper.setmBucket(tempBuckets.get(i));
-                            wrapper.setmImageUrl(tempUrls.get(i));
-                            wrappers.add(wrapper);
-                        }
-                        if (getView() != null) {
-                            getView().progress(false);
-                            getView().setBucketList(wrappers);
-                        }
-                    }
+//        bucketsUsecase.execute().flatMap(buckets -> {
+//            this.tempBuckets = buckets;
+//            return Observable.from(buckets);
+//        })
+//                .concatMap(bucket -> ApiDribbble.dribbble().getBucketImage(bucket.getId(), 1))
+//                .concatMap(shots -> {
+//                    if (shots.size() == 0) {
+//                        tempUrls.add(null);
+//                    } else {
+//                        tempUrls.add(shots.get(0).getImages().getTeaser());
+//                    }
+//                    return Observable.from(shots);
+//                })
+//                .subscribeOn(Schedulers.newThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Subscriber<Shot>() {
+//                    @Override
+//                    public void onCompleted() {
+//                        Log.i("buceks", tempBuckets.get(0).getName());
+//                        Log.i("urls", Arrays.toString(tempUrls.toArray()));
+//                        for (int i = 0; i < tempBuckets.size(); i++) {
+//                            BucketWrapper wrapper = new BucketWrapper();
+//                            wrapper.setmBucket(tempBuckets.get(i));
+//                            wrapper.setmImageUrl(tempUrls.get(i));
+//                            wrappers.add(wrapper);
+//                        }
+//                        if (getView() != null) {
+//                            getView().progress(false);
+//                            getView().setBucketList(wrappers);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        Log.e("error", e.getLocalizedMessage());
+//                    }
+//
+//                    @Override
+//                    public void onNext(Shot shot) {
+//                        Log.i("shot", shot.getId() + "");
+//                    }
+//                });
+        BucketManager.getInstance().loadBuckets(new BucketManager.OnBucketLoadCallback() {
+            @Override
+            public void onSuccess(List<BucketWrapper> bucketWrappers) {
+                if (getView() != null) {
+                    getView().progress(false);
+                    getView().setBucketList(bucketWrappers);
+                }
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("error", e.getLocalizedMessage());
-                    }
-
-                    @Override
-                    public void onNext(Shot shot) {
-                        Log.i("shot", shot.getId() + "");
-                    }
-                });
+            @Override
+            public void onFail(String message) {
+                if (getView() != null) {
+                    getView().progress(false);
+                    getView().showError(message);
+                }
+            }
+        });
     }
 
     public void loadComments(int id, int page) {

@@ -1,10 +1,12 @@
 package com.me.xpf.pigggeon.ui.adapter;
 
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.bumptech.glide.Glide;
 import com.me.xpf.pigggeon.R;
 import com.me.xpf.pigggeon.config.Config;
@@ -17,6 +19,7 @@ import com.me.xpf.pigggeon.widget.animation.GlideCircleTransform;
 import com.xpf.me.architect.app.AppData;
 import com.xpf.me.architect.recyclerview.BaseAdapter;
 import com.xpf.me.architect.recyclerview.RecyclerHolder;
+import com.xpf.me.architect.recyclerview.RequestManager;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +30,10 @@ import java.util.List;
 public class ShotsAdapter extends BaseAdapter<Shot> {
 
     private int avatarSize;
+
+    private Drawable mDefaultImageDrawable = AppData.getDrawable(R.drawable.loading);
+
+    private Drawable mDefaultAvatarImageDrawable = AppData.getDrawable(R.drawable.ic_avatar_default);
 
     private ShotDetailActivity.MyRequestOptions myRequestOptions = new ShotDetailActivity.MyRequestOptions();
 
@@ -82,6 +89,7 @@ public class ShotsAdapter extends BaseAdapter<Shot> {
 
         }
 
+
         if (PreferenceUtil.getPreString(Config.PRE_SHOT_KEY, "").equals("teams")) {
             userName.setText(shot.getTeam().getName());
             Glide.with(mContext)
@@ -104,20 +112,20 @@ public class ShotsAdapter extends BaseAdapter<Shot> {
                     .into(userPhoto);
         }
         shotName.setText(shot.getTitle());
-        textView.setText(shot.getViewsCount());
-        textComment.setText(shot.getCommentsCount());
-        textLike.setText(shot.getLikesCount());
+        textView.setText(String.valueOf(shot.getViewsCount()));
+        textComment.setText(String.valueOf(shot.getCommentsCount()));
+        textLike.setText(String.valueOf(shot.getLikesCount()));
 
         if (shot.isGif()) {
             gifLogo.setVisibility(View.VISIBLE);
         } else {
             gifLogo.setVisibility(View.GONE);
         }
-        Glide.with(mContext)
-                .asDrawable()
-                .load(shot.getImages().getTeaser())
-                .apply(myRequestOptions.centerCrop(AppData.getContext())
-                        .placeholder(R.drawable.loading))
-                .into(shotPhoto);
+        if (recyclerHolder.mImageRequest != null) {
+            recyclerHolder.mImageRequest.cancelRequest();
+        }
+        ImageLoader.ImageListener listener = RequestManager.getImageListener(shotPhoto, shotName, mDefaultImageDrawable, mDefaultImageDrawable, isScrolling);
+        recyclerHolder.mImageRequest = RequestManager.loadImage(shot.getImages().getTeaser(), listener);
+
     }
 }
