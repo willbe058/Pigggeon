@@ -1,13 +1,14 @@
 package com.me.xpf.pigggeon.ui.adapter;
 
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.bumptech.glide.Glide;
 import com.me.xpf.pigggeon.R;
 import com.me.xpf.pigggeon.model.BucketWrapper;
@@ -16,6 +17,7 @@ import com.me.xpf.pigggeon.utils.SettingsUtil;
 import com.xpf.me.architect.app.AppData;
 import com.xpf.me.architect.recyclerview.BaseAdapter;
 import com.xpf.me.architect.recyclerview.RecyclerHolder;
+import com.xpf.me.architect.recyclerview.RequestManager;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,11 +29,11 @@ import java.util.Set;
  */
 public class BucketAdapter extends BaseAdapter<BucketWrapper> implements View.OnClickListener {
 
-    private List<BucketWrapper> mBuckets;
-
     private String shotCounts = "%d shots";
     private OnBucketClickListener listener;
     private Set<Integer> positionSet = new HashSet<>();
+
+    private Drawable mDefaultAvatarImageDrawable = AppData.getDrawable(R.drawable.loading);
 
     private ShotDetailActivity.MyRequestOptions myRequestOptions = new ShotDetailActivity.MyRequestOptions();
 
@@ -41,12 +43,25 @@ public class BucketAdapter extends BaseAdapter<BucketWrapper> implements View.On
 
     @Override
     public void convert(RecyclerHolder recyclerHolder, BucketWrapper bucketWrapper, int position, boolean b) {
+        ImageLoader.ImageListener listener = RequestManager.getImageListener(
+                recyclerHolder.getView(R.id.img_bucket),
+                recyclerHolder.getView(R.id.bucket_name),
+                mDefaultAvatarImageDrawable,
+                mDefaultAvatarImageDrawable,
+                isScrolling);
+
+        if (recyclerHolder.mImageRequest != null) {
+            recyclerHolder.mImageRequest.cancelRequest();
+        }
+
         if (bucketWrapper.getmImageUrl() != null) {
-            Glide.with(mContext)
-                    .asDrawable()
-                    .load(bucketWrapper.getmImageUrl())
-                    .apply(myRequestOptions.placeholder(R.drawable.loading))
-                    .into(((ImageView) recyclerHolder.getView(R.id.img_bucket)));
+            recyclerHolder.mImageRequest = RequestManager.loadImage(bucketWrapper.getmImageUrl(), listener);
+
+//            Glide.with(mContext)
+//                    .asDrawable()
+//                    .load(bucketWrapper.getmImageUrl())
+//                    .apply(myRequestOptions.placeholder(R.drawable.loading))
+//                    .into(((ImageView) recyclerHolder.getView(R.id.img_bucket)));
         } else {
             Glide.with(mContext)
                     .asDrawable()

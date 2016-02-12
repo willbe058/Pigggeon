@@ -125,7 +125,7 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     @Bind(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
 
-    private NewBucketAdapter bucketAdapter;
+    private BucketAdapter bucketAdapter;
 
     private MaterialDialog progress;
 
@@ -564,10 +564,11 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
                 .negativeText(getResources().getString(R.string.create_new_bucket)).build();
 
         RecyclerView bucketRecyclerView = ((RecyclerView) materialDialog.getCustomView().findViewById(R.id.bucket_list));
-        bucketAdapter = new NewBucketAdapter(this, bucketList);
+        bucketAdapter = new BucketAdapter(bucketRecyclerView, bucketList);
         bucketRecyclerView.setHasFixedSize(true);
         bucketRecyclerView.setLayoutManager(manager);
         bucketRecyclerView.setAdapter(bucketAdapter);
+//        bucketRecyclerView.clearOnScrollListeners();
         materialDialog.show();
     }
 

@@ -13,7 +13,7 @@
         android:id="@+id/img_bucket"
         android:layout_width="64dp"
         android:layout_height="wrap_content"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerInside" />
 
     <TextView
         android:id="@+id/bucket_name"
