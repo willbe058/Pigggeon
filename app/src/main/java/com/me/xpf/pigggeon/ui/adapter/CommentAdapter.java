@@ -37,7 +37,7 @@ public class CommentAdapter extends BaseHeaderFooterAdapter<Comment> implements 
 
     private OnCommentClickListener onCommentClickListener;
 
-    public void setOnAvatarClickListner(OnAvatarClickListener l) {
+    public void setOnAvatarClickListener(OnAvatarClickListener l) {
         this.listener = l;
     }
 

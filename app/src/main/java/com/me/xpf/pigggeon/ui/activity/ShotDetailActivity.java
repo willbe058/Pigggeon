@@ -36,7 +36,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.BaseRequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.me.xpf.pigggeon.R;
@@ -53,7 +52,6 @@ import com.me.xpf.pigggeon.model.api.User;
 import com.me.xpf.pigggeon.model.api.Userable;
 import com.me.xpf.pigggeon.model.usecase.LikeUsecase;
 import com.me.xpf.pigggeon.presenter.ShotDetailPresenter;
-import com.me.xpf.pigggeon.ui.adapter.BucketAdapter;
 import com.me.xpf.pigggeon.ui.adapter.CommentAdapter;
 import com.me.xpf.pigggeon.ui.adapter.NewBucketAdapter;
 import com.me.xpf.pigggeon.utils.SettingsUtil;
@@ -66,7 +64,6 @@ import com.me.xpf.pigggeon.widget.SquareImageView;
 import com.me.xpf.pigggeon.widget.animation.GlideCircleTransform;
 import com.xpf.me.architect.app.AppData;
 import com.xpf.me.architect.fragment.MvpFragment;
-import com.xpf.me.architect.recyclerview.BaseAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -369,7 +366,7 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     protected void setUpRecyclerView(RecyclerView recyclerView, View header) {
         GridLayoutManager layoutManager = new GridLayoutManager(this, 1, GridLayoutManager.VERTICAL, false);
         adapter = new CommentAdapter(recyclerView, dataSet, header);
-        adapter.setOnAvatarClickListner(this);
+        adapter.setOnAvatarClickListener(this);
         adapter.setOnCommentClickListener(this);
         adapter.setOnLoadMoreListener(new BaseHeaderFooterAdapter.OnLoadMoreListener() {
             @Override
