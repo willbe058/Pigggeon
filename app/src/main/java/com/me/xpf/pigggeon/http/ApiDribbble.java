@@ -68,7 +68,8 @@ public class ApiDribbble implements Constant {
                     .header("Cache-Control", "no-cache")
                     .build();
             return chain.proceed(request);
-        });
+        })
+                .addInterceptor(interceptor);
 
 
         Retrofit retrofit = new Retrofit.Builder()

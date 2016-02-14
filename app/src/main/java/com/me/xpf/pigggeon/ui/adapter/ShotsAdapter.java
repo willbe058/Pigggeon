@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.bumptech.glide.Glide;
 import com.me.xpf.pigggeon.R;
+import com.me.xpf.pigggeon.base.MyRequestOptions;
 import com.me.xpf.pigggeon.config.Config;
 import com.me.xpf.pigggeon.model.api.Shot;
 import com.me.xpf.pigggeon.ui.activity.ShotDetailActivity;
@@ -33,9 +34,7 @@ public class ShotsAdapter extends BaseAdapter<Shot> {
 
     private Drawable mDefaultImageDrawable = AppData.getDrawable(R.drawable.loading);
 
-    private Drawable mDefaultAvatarImageDrawable = AppData.getDrawable(R.drawable.ic_avatar_default);
-
-    private ShotDetailActivity.MyRequestOptions myRequestOptions = new ShotDetailActivity.MyRequestOptions();
+    private MyRequestOptions myRequestOptions = new MyRequestOptions();
 
     public void setData(List<Shot> shotList) {
         this.realData = shotList;

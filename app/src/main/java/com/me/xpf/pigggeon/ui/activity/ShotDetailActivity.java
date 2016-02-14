@@ -17,7 +17,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -41,6 +40,7 @@ import com.bumptech.glide.request.BaseRequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.me.xpf.pigggeon.R;
+import com.me.xpf.pigggeon.base.MyRequestOptions;
 import com.me.xpf.pigggeon.base.activity.BaseStatusBarTintMvpActivity;
 import com.me.xpf.pigggeon.base.adapter.BaseHeaderFooterAdapter;
 import com.me.xpf.pigggeon.event.BusProvider;
@@ -51,7 +51,6 @@ import com.me.xpf.pigggeon.model.api.Like;
 import com.me.xpf.pigggeon.model.api.Shot;
 import com.me.xpf.pigggeon.model.api.User;
 import com.me.xpf.pigggeon.model.api.Userable;
-import com.me.xpf.pigggeon.model.usecase.BucketsUsecase;
 import com.me.xpf.pigggeon.model.usecase.LikeUsecase;
 import com.me.xpf.pigggeon.presenter.ShotDetailPresenter;
 import com.me.xpf.pigggeon.ui.adapter.BucketAdapter;
@@ -67,6 +66,7 @@ import com.me.xpf.pigggeon.widget.SquareImageView;
 import com.me.xpf.pigggeon.widget.animation.GlideCircleTransform;
 import com.xpf.me.architect.app.AppData;
 import com.xpf.me.architect.fragment.MvpFragment;
+import com.xpf.me.architect.recyclerview.BaseAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,7 +125,7 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
     @Bind(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
 
-    private BucketAdapter bucketAdapter;
+    private NewBucketAdapter bucketAdapter;
 
     private MaterialDialog progress;
 
@@ -415,10 +415,6 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
         }
     }
 
-    public static class MyRequestOptions extends BaseRequestOptions {
-
-    }
-
     private void startLikeAnimation(final FloatingActionButton fab) {
         AnimatorSet animatorSet = new AnimatorSet();
         ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(fab, "rotation", 0f, 360f);
@@ -564,11 +560,11 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
                 .negativeText(getResources().getString(R.string.create_new_bucket)).build();
 
         RecyclerView bucketRecyclerView = ((RecyclerView) materialDialog.getCustomView().findViewById(R.id.bucket_list));
-        bucketAdapter = new BucketAdapter(bucketRecyclerView, bucketList);
+        bucketAdapter = new NewBucketAdapter(this, bucketList);
         bucketRecyclerView.setHasFixedSize(true);
         bucketRecyclerView.setLayoutManager(manager);
         bucketRecyclerView.setAdapter(bucketAdapter);
-//        bucketRecyclerView.clearOnScrollListeners();
+        bucketRecyclerView.clearOnScrollListeners();
         materialDialog.show();
     }
 

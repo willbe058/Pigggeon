@@ -36,9 +36,11 @@ public class BucketManager {
 
     private static volatile BucketManager singleton;
 
-    private static Map<Integer, String> urlMap;
+    private static Map<Integer, String> urlMap;//to store the shot url by order
 
-    private static List<BucketWrapper> bucketWrappers;
+    private static List<BucketWrapper> bucketWrappers;//to store the wrapper of the buckets
+
+    private BucketsUsecase bucketsUsecase = new BucketsUsecase();
 
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
 
@@ -105,34 +107,44 @@ public class BucketManager {
         return singleton;
     }
 
+    /**
+     * to get all buckets with cover pictures, we should get each image url after getting all the
+     * buckets data. And this is one way to do such works.
+     *
+     * @param callback callback for this network request
+     */
     public void loadBuckets(OnBucketLoadCallback callback) {
 
-        new BucketsUsecase().execute().subscribe(new Subscriber<List<Bucket>>() {
+        bucketsUsecase.execute().subscribe(new Subscriber<List<Bucket>>() {
             @Override
             public void onCompleted() {
-
+                //do nothing
             }
 
             @Override
             public void onError(Throwable e) {
+                bucketWrappers = new ArrayList<>();
+                urlMap = new HashMap<>();
                 callback.onFail(e.getLocalizedMessage());
             }
 
             @Override
             public void onNext(List<Bucket> buckets) {
-                final CountDownLatch doneLatch = new CountDownLatch(buckets.size());
+                final CountDownLatch doneLatch = new CountDownLatch(buckets.size());//countdown for getting urls task
                 final CountDownLatch startLatch = new CountDownLatch(1);
+                //init needed objects because the manager is singleton
                 mHandler = new BucketHandler(callback);
                 bucketWrappers = new ArrayList<>();
                 urlMap = new HashMap<>();
+                //countdown task for not blocking the UI thread
                 Runnable runnable = () -> {
                     for (int i = 0; i < buckets.size(); i++) {
-
                         BucketWrapper wrapper = new BucketWrapper();
                         wrapper.setId(i);
                         wrapper.setmBucket(buckets.get(i));
                         bucketWrappers.add(wrapper);
                         final int finalI = i;
+                        //each url request task
                         Runnable getImageTask = () -> ApiDribbble.dribbble().getBucketImage(buckets.get(finalI).getId(), 1)
                                 .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -149,6 +161,7 @@ public class BucketManager {
 
                                     @Override
                                     public void onNext(List<Shot> shots) {
+                                        //wait for start countdown
                                         try {
                                             startLatch.await();
                                         } catch (InterruptedException e) {
@@ -167,17 +180,19 @@ public class BucketManager {
 
                         THREAD_POOL_EXECUTOR.execute(getImageTask);
                     }
+                    //start
                     startLatch.countDown();
+                    //wait for finishing tasks
                     try {
                         doneLatch.await();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } finally {
                         for (int i = 0; i < bucketWrappers.size(); i++) {
-                            //we could assume that bucketWrappers' size now is the same as buckets
+                            //we could assume that bucketWrappers' size now is equal to  buckets
                             BucketWrapper wrapper = bucketWrappers.get(i);
                             wrapper.setmImageUrl(urlMap.get(i));
-                            Log.i("buckets!!!", wrapper.getId() + "#" + wrapper.getmImageUrl());
+                            Log.i("buckets", wrapper.getId() + "#" + wrapper.getmImageUrl());
                         }
                         mHandler.sendEmptyMessage(1);
                     }

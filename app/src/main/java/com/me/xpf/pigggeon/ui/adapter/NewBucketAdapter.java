@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.bumptech.glide.Glide;
 import com.me.xpf.pigggeon.R;
+import com.me.xpf.pigggeon.base.MyRequestOptions;
 import com.me.xpf.pigggeon.model.BucketWrapper;
 import com.me.xpf.pigggeon.model.api.Bucket;
 import com.me.xpf.pigggeon.ui.activity.ShotDetailActivity;
@@ -42,7 +43,7 @@ public class NewBucketAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final int VIEW_ITEM = 1;
     private final int VIEW_PRO = 0;
 
-    private ShotDetailActivity.MyRequestOptions myRequestOptions = new ShotDetailActivity.MyRequestOptions();
+    private MyRequestOptions myRequestOptions = new MyRequestOptions();
 
     public NewBucketAdapter(Context context, List<BucketWrapper> buckets) {
         this.mContext = context;
