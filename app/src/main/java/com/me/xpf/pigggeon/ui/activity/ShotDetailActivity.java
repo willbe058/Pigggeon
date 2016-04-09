@@ -34,6 +34,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -82,58 +83,44 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
         CommentAdapter.OnCommentClickListener {
 
     private static final String SER_SHOT = "serializable.shot";
-
     private static final String SER_USER = "serializable.user";
+    private final static AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
+    private final static OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
 
-    private AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
+    @Bind(R.id.toolbar_in_detail)
+    Toolbar toolbar;
+    @Bind(R.id.commentRecyclerView)
+    RecyclerView recyclerView;
+    @Bind(R.id.favor)
+    FavorLayout favorLayout;
+    @Bind(R.id.fab)
+    FloatingActionButton likeFab;
+    @Bind(R.id.progress)
+    ProgressBar progressBar;
+    @Bind(R.id.image)
+    SquareImageView shotImage;
+    @Bind(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout collapsingToolbarLayout;
 
-    private OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
-
-    protected MvpFragment.OnUpdateListener updateListener;
 
     private LikeUsecase likeUsecase = new LikeUsecase();
 
     private Shot mShot;
-
     private int avatarSize;
-
     private Userable mUser;
-
     private int vibrantColor;
-
-    @Bind(R.id.toolbar_in_detail)
-    Toolbar toolbar;
-
-    @Bind(R.id.commentRecyclerView)
-    RecyclerView recyclerView;
-
-    @Bind(R.id.favor)
-    FavorLayout favorLayout;
-
-    @Bind(R.id.fab)
-    FloatingActionButton likeFab;
-
-    @Bind(R.id.progress)
-    ProgressBar progressBar;
-
-    @Bind(R.id.image)
-    SquareImageView shotImage;
-
-    @Bind(R.id.collapsing_toolbar)
-    CollapsingToolbarLayout collapsingToolbarLayout;
-
-    private NewBucketAdapter bucketAdapter;
-
     private MaterialDialog progress;
-
-    private List<Comment> dataSet = new ArrayList<>();
-
-    private CommentAdapter adapter;
-
     private boolean isLike = false;
 
-    public static void navigate(AppCompatActivity activity, Shot shot, Userable user) {
 
+    private CommentAdapter adapter;
+    private NewBucketAdapter bucketAdapter;
+
+
+    private List<Comment> dataSet = new ArrayList<>();
+    protected MvpFragment.OnUpdateListener updateListener;
+
+    public static void navigate(AppCompatActivity activity, Shot shot, Userable user) {
         Intent intent = new Intent(activity, ShotDetailActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(SER_SHOT, shot);
@@ -529,29 +516,19 @@ public class ShotDetailActivity extends BaseStatusBarTintMvpActivity<ShotDetailV
         final MaterialDialog materialDialog = new MaterialDialog.Builder(this)
                 .title(getResources().getString(R.string.add_bucket))
                 .customView(R.layout.dialog_bucket_list, false)
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        super.onPositive(dialog);
-                        List<Bucket> chosenBuckets = new ArrayList<Bucket>();
-                        for (int i = 0; i < bucketAdapter.getBuckets().size(); ++i) {
-                            if (bucketAdapter.getBuckets().get(i).getmBucket().isChecked()) {
-                                chosenBuckets.add(bucketAdapter.getBuckets().get(i).getmBucket());
-                            }
+                .onPositive((dialog, which) -> {
+                    List<Bucket> chosenBuckets = new ArrayList<>();
+                    for (int i = 0; i < bucketAdapter.getBuckets().size(); ++i) {
+                        if (bucketAdapter.getBuckets().get(i).getmBucket().isChecked()) {
+                            chosenBuckets.add(bucketAdapter.getBuckets().get(i).getmBucket());
                         }
-                        if (chosenBuckets.size() == 0) {
-                            dialog.dismiss();
-                        } else {
+                    }
+                    if (chosenBuckets.size() == 0) {
+                        dialog.dismiss();
+                    } else {
 //                            addBucketPresenter.onClickAddButton(chosenBuckets, shot.getId());
-                        }
-
                     }
 
-                    @Override
-                    public void onNegative(MaterialDialog dialog) {
-                        super.onNegative(dialog);
-//                        addBucketPresenter.onClickCreateNewButton();
-                    }
                 })
                 .positiveText(getResources().getString(R.string.done))
                 .negativeText(getResources().getString(R.string.create_new_bucket)).build();

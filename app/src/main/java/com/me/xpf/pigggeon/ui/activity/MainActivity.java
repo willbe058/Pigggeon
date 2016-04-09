@@ -62,37 +62,31 @@ import rx.Subscriber;
 import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
 import uk.co.chrisjenx.calligraphy.TypefaceUtils;
 
-public class MainActivity extends BaseStatusBarTintMvpActivity<MainView, MainPresenter> implements MainView {
+public class MainActivity extends BaseStatusBarTintMvpActivity<MainView, MainPresenter>
+        implements MainView {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
-
     @Bind(R.id.tabs)
     TabLayout tabLayout;
-
     @Bind(R.id.viewpager)
     ViewPager viewPager;
-
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-
-    private ImageView header;
-
-    private TextView userName;
-
-    private HtmlTextView userBio;
-
-    private ImageView blurBack;
-
     @Bind(R.id.nav_view)
     NavigationView navigationView;
 
+    //views of header
+    private ImageView header;
+    private TextView userName;
+    private HtmlTextView userBio;
+    private ImageView blurBack;
+    private MaterialDialog progressDialog;
+
+
     private CalligraphyTypefaceSpan typefaceSpan;
-
     private ActionBarDrawerToggle mToggle;
-
     private boolean isLoaded;
-
     private String SHOT_TYPE_STRING = "", SORT_TYPE_STRING = "";
 
     @Override
@@ -140,7 +134,11 @@ public class MainActivity extends BaseStatusBarTintMvpActivity<MainView, MainPre
     @Override
     protected void setupViews() {
         super.setupViews();
-
+        progressDialog = new MaterialDialog.Builder(MainActivity.this)
+                .title("Log out...")
+                .progress(true, 0)
+                .cancelable(false)
+                .build();
         mToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.hello_world, R.string.hello_world);
         drawerLayout.addDrawerListener(mToggle);
 
@@ -150,6 +148,131 @@ public class MainActivity extends BaseStatusBarTintMvpActivity<MainView, MainPre
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        mToggle.syncState();
+        super.onPostCreate(savedInstanceState);
+    }
+
+    @NonNull
+    @Override
+    public MainPresenter createPresenter() {
+        return new MainPresenter();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case R.id.sort:
+                if (SettingsUtil.isDarkMode()) {
+                    new BottomSheet.Builder(this).darkTheme().title("Sort by").sheet(R.menu.bottom).listener((dialog, which) -> {
+                        handleSortButton(item, which);
+                    }).show();
+                } else {
+                    new BottomSheet.Builder(this).title("Sort by").sheet(R.menu.bottom).listener((dialog, which) -> {
+                        handleSortButton(item, which);
+                    }).show();
+                }
+                break;
+            case R.id.about:
+                startActivity(new Intent(this, AboutActivity.class));
+                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                break;
+            case R.id.help:
+                PreferenceUtil.setPreBoolean(Config.PRE_FROM_MAIN_KEY, true);
+                startActivity(new Intent(this, TourActivity.class));
+                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private boolean isExit;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (isExit) {
+                this.finish();
+            } else {
+                Toast.makeText(this, "Press back again to exit", Toast.LENGTH_LONG).show();
+                isExit = true;
+                new Handler().postDelayed(() -> isExit = false, 2000);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
+    public void updateUserAvatar(User user) {
+        final int avatarSize = getResources().getDimensionPixelSize(R.dimen.user);
+        if (user != null) {
+            isLoaded = true;
+            PigggeonApp.setUser(user);
+            PigggeonApp.setUserId(user.getId());
+            userName.setText(user.getName());
+            userBio.setText(user.getBio() != null ? user.getBio() : "");
+            Glide.with(AppData.getContext())
+                    .asDrawable()
+                    .load(user.getAvatarUrl())
+                    .apply(new MyRequestOptions()
+                            .override(avatarSize, avatarSize)
+                            .centerCrop(AppData.getContext())
+                            .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext())))
+                    .into(header);
+
+            Glide.with(AppData.getContext())
+                    .asBitmap()
+                    .load(user.getAvatarUrl())
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                            blurBack.setImageBitmap(resource);
+                            Blurry.with(AppData.getContext()).capture(blurBack).into(blurBack);
+                        }
+                    });
+        }
+    }
+
+    @Override
+    public void setError(String error) {
+        Snackbar.make(drawerLayout, error, Snackbar.LENGTH_INDEFINITE)
+                .setAction("RETRY", v -> {
+                    loadUserAvatar();
+                });
+        isLoaded = false;
+    }
+
+    @Override
+    public void showProgress(boolean isActive) {
+        if (isActive) {
+            progressDialog.show();
+        } else {
+            progressDialog.dismiss();
+        }
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -208,35 +331,9 @@ public class MainActivity extends BaseStatusBarTintMvpActivity<MainView, MainPre
                             .setTitle("Log out?")
                             .setPositiveButton("LOG OUT", (dialog, which) -> {
                                 dialog.dismiss();
-                                MaterialDialog progressDialog = new MaterialDialog.Builder(MainActivity.this)
-                                        .title("Log out...")
-                                        .progress(true, 0)
-                                        .cancelable(false)
-                                        .build();
+
                                 progressDialog.show();
-                                new LogoutUsecase().clearCookie().finallyDo(progressDialog::dismiss)
-                                        .subscribe(new Subscriber<Object>() {
-                                            @Override
-                                            public void onCompleted() {
-                                                progressDialog.dismiss();
-                                                PreferenceUtil.setPreBoolean(Config.PRE_IS_LOG_KEY, false);
-                                                PreferenceUtil.setPreString(Config.PRE_ACCESS_TOKEN_KEY, null);
-                                                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                                                finish();
-                                            }
-
-                                            @Override
-                                            public void onError(Throwable e) {
-                                                Snackbar.make(drawerLayout, e.getLocalizedMessage(),
-                                                        Snackbar.LENGTH_LONG)
-                                                        .show();
-                                            }
-
-                                            @Override
-                                            public void onNext(Object o) {
-
-                                            }
-                                        });
+                                presenter.logOut();
                             })
                             .setNegativeButton("CANCEL", (dialog, which) -> {
                                 dialog.dismiss();
@@ -353,121 +450,6 @@ public class MainActivity extends BaseStatusBarTintMvpActivity<MainView, MainPre
                 item.setIcon(R.drawable.dpviews);
                 break;
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        mToggle.syncState();
-        super.onPostCreate(savedInstanceState);
-    }
-
-    @NonNull
-    @Override
-    public MainPresenter createPresenter() {
-        return new MainPresenter();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        switch (id) {
-            case R.id.sort:
-                if (SettingsUtil.isDarkMode()) {
-                    new BottomSheet.Builder(this).darkTheme().title("Sort by").sheet(R.menu.bottom).listener((dialog, which) -> {
-                        handleSortButton(item, which);
-                    }).show();
-                } else {
-                    new BottomSheet.Builder(this).title("Sort by").sheet(R.menu.bottom).listener((dialog, which) -> {
-                        handleSortButton(item, which);
-                    }).show();
-                }
-                break;
-            case R.id.about:
-                startActivity(new Intent(this, AboutActivity.class));
-                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                break;
-            case R.id.help:
-                PreferenceUtil.setPreBoolean(Config.PRE_FROM_MAIN_KEY, true);
-                startActivity(new Intent(this, TourActivity.class));
-                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private boolean isExit;
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (isExit) {
-                this.finish();
-            } else {
-                Toast.makeText(this, "Press back again to exit", Toast.LENGTH_LONG).show();
-                isExit = true;
-                new Handler().postDelayed(() -> isExit = false, 2000);
-            }
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public Context getContext() {
-        return this;
-    }
-
-    @Override
-    public void updateUserAvatar(User user) {
-        final int avatarSize = getResources().getDimensionPixelSize(R.dimen.user);
-        if (user != null) {
-            isLoaded = true;
-            PigggeonApp.setUser(user);
-            PigggeonApp.setUserId(user.getId());
-            userName.setText(user.getName());
-            userBio.setText(user.getBio() != null ? user.getBio() : "");
-            Glide.with(AppData.getContext())
-                    .asDrawable()
-                    .load(user.getAvatarUrl())
-                    .apply(new MyRequestOptions()
-                            .override(avatarSize, avatarSize)
-                            .centerCrop(AppData.getContext())
-                            .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext())))
-                    .into(header);
-
-            Glide.with(AppData.getContext())
-                    .asBitmap()
-                    .load(user.getAvatarUrl())
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                            blurBack.setImageBitmap(resource);
-                            Blurry.with(AppData.getContext()).capture(blurBack).into(blurBack);
-                        }
-                    });
-        }
-    }
-
-    @Override
-    public void setError(String error) {
-        Snackbar.make(drawerLayout, error, Snackbar.LENGTH_INDEFINITE)
-                .setAction("RETRY", v -> {
-                    loadUserAvatar();
-                });
-        isLoaded = false;
     }
 
     /**

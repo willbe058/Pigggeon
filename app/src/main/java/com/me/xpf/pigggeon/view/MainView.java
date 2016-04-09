@@ -12,4 +12,6 @@ public interface MainView extends IView {
 
     void setError(String error);
 
+    void showProgress(boolean isActive);
+
 }

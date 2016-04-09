@@ -20,9 +20,6 @@ import rx.Subscriber;
  */
 public class ShotDetailPresenter extends BasePresenter<ShotDetailView> {
 
-    private IModel<List<Comment>> commentUsecase;
-
-
     public void loadBuckets() {
         if (getView() != null) {
             getView().progress(true);
@@ -47,7 +44,7 @@ public class ShotDetailPresenter extends BasePresenter<ShotDetailView> {
     }
 
     public void loadComments(int id, int page) {
-        commentUsecase = new CommentUsecase(id, page);
+        IModel<List<Comment>> commentUsecase = new CommentUsecase(id, page);
         if (getView() != null) {
             commentUsecase.execute()
                     .finallyDo(() -> {
