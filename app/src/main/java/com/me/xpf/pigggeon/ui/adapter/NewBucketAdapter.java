@@ -1,7 +1,6 @@
 package com.me.xpf.pigggeon.ui.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,16 +13,12 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.bumptech.glide.Glide;
 import com.me.xpf.pigggeon.R;
 import com.me.xpf.pigggeon.base.MyRequestOptions;
-import com.me.xpf.pigggeon.model.BucketWrapper;
-import com.me.xpf.pigggeon.model.api.Bucket;
-import com.me.xpf.pigggeon.ui.activity.ShotDetailActivity;
+import com.me.xpf.pigggeon.model.entity.BucketWrapper;
+import com.me.xpf.pigggeon.model.entity.Bucket;
 import com.me.xpf.pigggeon.widget.PigggeonLoadAnimationView;
-import com.xpf.me.architect.app.AppData;
-import com.xpf.me.architect.recyclerview.RequestManager;
 
 import java.util.HashSet;
 import java.util.List;

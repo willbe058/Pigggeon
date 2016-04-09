@@ -1,13 +1,10 @@
 package com.me.xpf.pigggeon.ui.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.app.AppCompatDialog;
 import android.util.Log;
-import android.view.Window;
-import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -20,10 +17,11 @@ import com.me.xpf.pigggeon.app.PigggeonApp;
 import com.me.xpf.pigggeon.base.activity.BaseStatusBarTintActivity;
 import com.me.xpf.pigggeon.config.Config;
 import com.me.xpf.pigggeon.config.Constant;
-import com.me.xpf.pigggeon.model.api.AccessToken;
+import com.me.xpf.pigggeon.model.entity.AccessToken;
 import com.me.xpf.pigggeon.model.usecase.LoginUsecase;
 import com.me.xpf.pigggeon.utils.PreferenceUtil;
 import com.xpf.me.architect.app.AppData;
+import com.xpf.me.architect.model.IModel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -114,8 +112,8 @@ public class LoginActivity extends BaseStatusBarTintActivity implements Constant
                         .build();
                 progressDialog.show();
 
-                new LoginUsecase()
-                        .getAccessToken(getCode(uri))
+                IModel<AccessToken> accessTokenUsecase = new LoginUsecase(getCode(uri));
+                accessTokenUsecase.execute()
                         .finallyDo(progressDialog::dismiss)
                         .subscribe(new Subscriber<AccessToken>() {
                             @Override

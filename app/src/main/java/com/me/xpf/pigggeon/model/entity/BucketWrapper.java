@@ -1,6 +1,4 @@
-package com.me.xpf.pigggeon.model;
-
-import com.me.xpf.pigggeon.model.api.Bucket;
+package com.me.xpf.pigggeon.model.entity;
 
 /**
  * Created by pengfeixie on 16/2/4.

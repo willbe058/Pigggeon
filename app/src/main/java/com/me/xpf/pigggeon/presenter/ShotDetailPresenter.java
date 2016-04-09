@@ -3,11 +3,12 @@ package com.me.xpf.pigggeon.presenter;
 import android.widget.Toast;
 
 import com.me.xpf.pigggeon.helper.BucketManager;
-import com.me.xpf.pigggeon.model.BucketWrapper;
-import com.me.xpf.pigggeon.model.api.Comment;
+import com.me.xpf.pigggeon.model.entity.BucketWrapper;
+import com.me.xpf.pigggeon.model.entity.Comment;
 import com.me.xpf.pigggeon.model.usecase.CommentUsecase;
 import com.me.xpf.pigggeon.view.ShotDetailView;
 import com.xpf.me.architect.app.AppData;
+import com.xpf.me.architect.model.IModel;
 import com.xpf.me.architect.presenter.BasePresenter;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import rx.Subscriber;
  */
 public class ShotDetailPresenter extends BasePresenter<ShotDetailView> {
 
-    private CommentUsecase commentUsecase = new CommentUsecase();
+    private IModel<List<Comment>> commentUsecase;
 
 
     public void loadBuckets() {
@@ -46,8 +47,9 @@ public class ShotDetailPresenter extends BasePresenter<ShotDetailView> {
     }
 
     public void loadComments(int id, int page) {
+        commentUsecase = new CommentUsecase(id, page);
         if (getView() != null) {
-            commentUsecase.getComments(id, page)
+            commentUsecase.execute()
                     .finallyDo(() -> {
                         if (getView() != null) {
                             getView().progress(false);

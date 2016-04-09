@@ -1,4 +1,4 @@
-package com.me.xpf.pigggeon.model.api;
+package com.me.xpf.pigggeon.model.entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by xpf on 2015/7/29.
  */
-public class Follower implements Userable {
+public class Followee implements Userable {
 
     @Expose
     private Integer id;
@@ -505,3 +505,6 @@ public class Follower implements Userable {
     }
 
 }
+
+
+

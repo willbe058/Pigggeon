@@ -37,7 +37,7 @@ import com.me.xpf.pigggeon.config.Constant;
 import com.me.xpf.pigggeon.event.BusProvider;
 import com.me.xpf.pigggeon.event.Event;
 import com.me.xpf.pigggeon.http.ApiDribbble;
-import com.me.xpf.pigggeon.model.api.User;
+import com.me.xpf.pigggeon.model.entity.User;
 import com.me.xpf.pigggeon.model.usecase.LogoutUsecase;
 import com.me.xpf.pigggeon.ui.fragment.ShotsFragment;
 import com.me.xpf.pigggeon.utils.PreferenceUtil;

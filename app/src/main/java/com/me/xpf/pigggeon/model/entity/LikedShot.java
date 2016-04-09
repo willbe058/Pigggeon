@@ -1,4 +1,4 @@
-package com.me.xpf.pigggeon.model.api;
+package com.me.xpf.pigggeon.model.entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by xpf on 2015/7/29.
  */
-public class UserFollowee implements Following {
+public class LikedShot {
 
     @Expose
     private Integer id;
@@ -14,7 +14,7 @@ public class UserFollowee implements Following {
     @Expose
     private String createdAt;
     @Expose
-    private Followee followee;
+    private Shot shot;
 
     /**
      * @return The id
@@ -45,17 +45,17 @@ public class UserFollowee implements Following {
     }
 
     /**
-     * @return The followee
+     * @return The shot
      */
-    public Followee getFollowee() {
-        return followee;
+    public Shot getShot() {
+        return shot;
     }
 
     /**
-     * @param followee The followee
+     * @param shot The shot
      */
-    public void setFollowee(Followee followee) {
-        this.followee = followee;
+    public void setShot(Shot shot) {
+        this.shot = shot;
     }
 
 }

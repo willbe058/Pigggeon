@@ -1,97 +1,144 @@
-package com.me.xpf.pigggeon.model.api;
+package com.me.xpf.pigggeon.model.entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
 /**
- * Created by xpf on 2015/7/24.
+ * Created by xpf on 2015/7/9.
  */
-public class Team implements Serializable {
+public class User implements Userable {
+
+    private static final long serialVersionUID = -706021054460046324L;
+
+    private int rid;
 
     @Expose
     private Integer id;
+
     @Expose
     private String name;
+
     @Expose
     private String username;
+
     @SerializedName("html_url")
     @Expose
     private String htmlUrl;
+
     @SerializedName("avatar_url")
     @Expose
     private String avatarUrl;
+
     @Expose
     private String bio;
+
     @Expose
     private String location;
-    @Expose
-    private Links links;
+
     @SerializedName("buckets_count")
     @Expose
     private Integer bucketsCount;
+
     @SerializedName("comments_received_count")
     @Expose
     private Integer commentsReceivedCount;
+
     @SerializedName("followers_count")
     @Expose
     private Integer followersCount;
+
     @SerializedName("followings_count")
     @Expose
     private Integer followingsCount;
+
     @SerializedName("likes_count")
     @Expose
     private Integer likesCount;
+
     @SerializedName("likes_received_count")
     @Expose
     private Integer likesReceivedCount;
-    @SerializedName("members_count")
-    @Expose
-    private Integer membersCount;
+
     @SerializedName("projects_count")
     @Expose
     private Integer projectsCount;
+
     @SerializedName("rebounds_received_count")
     @Expose
     private Integer reboundsReceivedCount;
+
     @SerializedName("shots_count")
     @Expose
     private Integer shotsCount;
+
+    @SerializedName("teams_count")
+    @Expose
+    private Integer teamsCount;
+
     @SerializedName("can_upload_shot")
     @Expose
     private Boolean canUploadShot;
+
     @Expose
     private String type;
+
     @Expose
     private Boolean pro;
+
     @SerializedName("buckets_url")
     @Expose
     private String bucketsUrl;
+
     @SerializedName("followers_url")
     @Expose
     private String followersUrl;
+
     @SerializedName("following_url")
     @Expose
     private String followingUrl;
+
     @SerializedName("likes_url")
     @Expose
     private String likesUrl;
-    @SerializedName("members_url")
+
+    @SerializedName("projects_url")
     @Expose
-    private String membersUrl;
+    private String projectsUrl;
+
     @SerializedName("shots_url")
     @Expose
     private String shotsUrl;
-    @SerializedName("team_shots_url")
+
+    @SerializedName("teams_url")
     @Expose
-    private String teamShotsUrl;
+    private String teamsUrl;
+
     @SerializedName("created_at")
     @Expose
     private String createdAt;
+
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
+
+    @Expose
+    private Links links;
+
+    public Links getLinks() {
+        return links;
+    }
+
+    public void setLinks(Links links) {
+        this.links = links;
+    }
+
+    public int getRid() {
+        return rid;
+    }
+
+    public void setRid(int rid) {
+        this.rid = rid;
+    }
 
     /**
      *
@@ -224,18 +271,12 @@ public class Team implements Serializable {
      * @return
      * The links
      */
-    public Links getLinks() {
-        return links;
-    }
 
     /**
      *
      * @param links
      * The links
      */
-    public void setLinks(Links links) {
-        this.links = links;
-    }
 
     /**
      *
@@ -348,24 +389,6 @@ public class Team implements Serializable {
     /**
      *
      * @return
-     * The membersCount
-     */
-    public Integer getMembersCount() {
-        return membersCount;
-    }
-
-    /**
-     *
-     * @param membersCount
-     * The members_count
-     */
-    public void setMembersCount(Integer membersCount) {
-        this.membersCount = membersCount;
-    }
-
-    /**
-     *
-     * @return
      * The projectsCount
      */
     public Integer getProjectsCount() {
@@ -415,6 +438,24 @@ public class Team implements Serializable {
      */
     public void setShotsCount(Integer shotsCount) {
         this.shotsCount = shotsCount;
+    }
+
+    /**
+     *
+     * @return
+     * The teamsCount
+     */
+    public Integer getTeamsCount() {
+        return teamsCount;
+    }
+
+    /**
+     *
+     * @param teamsCount
+     * The teams_count
+     */
+    public void setTeamsCount(Integer teamsCount) {
+        this.teamsCount = teamsCount;
     }
 
     /**
@@ -546,19 +587,19 @@ public class Team implements Serializable {
     /**
      *
      * @return
-     * The membersUrl
+     * The projectsUrl
      */
-    public String getMembersUrl() {
-        return membersUrl;
+    public String getProjectsUrl() {
+        return projectsUrl;
     }
 
     /**
      *
-     * @param membersUrl
-     * The members_url
+     * @param projectsUrl
+     * The projects_url
      */
-    public void setMembersUrl(String membersUrl) {
-        this.membersUrl = membersUrl;
+    public void setProjectsUrl(String projectsUrl) {
+        this.projectsUrl = projectsUrl;
     }
 
     /**
@@ -582,19 +623,19 @@ public class Team implements Serializable {
     /**
      *
      * @return
-     * The teamShotsUrl
+     * The teamsUrl
      */
-    public String getTeamShotsUrl() {
-        return teamShotsUrl;
+    public String getTeamsUrl() {
+        return teamsUrl;
     }
 
     /**
      *
-     * @param teamShotsUrl
-     * The team_shots_url
+     * @param teamsUrl
+     * The teams_url
      */
-    public void setTeamShotsUrl(String teamShotsUrl) {
-        this.teamShotsUrl = teamShotsUrl;
+    public void setTeamsUrl(String teamsUrl) {
+        this.teamsUrl = teamsUrl;
     }
 
     /**

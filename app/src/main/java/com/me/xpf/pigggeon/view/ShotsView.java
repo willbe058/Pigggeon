@@ -1,6 +1,6 @@
 package com.me.xpf.pigggeon.view;
 
-import com.me.xpf.pigggeon.model.api.Shot;
+import com.me.xpf.pigggeon.model.entity.Shot;
 import com.xpf.me.architect.view.IView;
 
 import java.util.List;

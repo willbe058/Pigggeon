@@ -1,12 +1,12 @@
-package com.me.xpf.pigggeon.model.api;
+package com.me.xpf.pigggeon.model.entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by xpf on 2015/7/29.
+ * Created by xpf on 2015/8/31.
  */
-public class LikedShot {
+public class LikedUser {
 
     @Expose
     private Integer id;
@@ -14,7 +14,7 @@ public class LikedShot {
     @Expose
     private String createdAt;
     @Expose
-    private Shot shot;
+    private User user;
 
     /**
      * @return The id
@@ -45,17 +45,17 @@ public class LikedShot {
     }
 
     /**
-     * @return The shot
+     * @return The user
      */
-    public Shot getShot() {
-        return shot;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * @param shot The shot
+     * @param user The user
      */
-    public void setShot(Shot shot) {
-        this.shot = shot;
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

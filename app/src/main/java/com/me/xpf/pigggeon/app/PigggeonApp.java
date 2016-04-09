@@ -2,7 +2,7 @@ package com.me.xpf.pigggeon.app;
 
 import com.me.xpf.pigggeon.R;
 import com.me.xpf.pigggeon.config.Config;
-import com.me.xpf.pigggeon.model.api.User;
+import com.me.xpf.pigggeon.model.entity.User;
 import com.me.xpf.pigggeon.utils.PreferenceUtil;
 import com.xpf.me.architect.app.CommonApplication;
 

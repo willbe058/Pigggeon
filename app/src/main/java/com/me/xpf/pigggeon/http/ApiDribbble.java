@@ -2,12 +2,12 @@ package com.me.xpf.pigggeon.http;
 
 import com.me.xpf.pigggeon.app.PigggeonApp;
 import com.me.xpf.pigggeon.config.Constant;
-import com.me.xpf.pigggeon.model.api.AccessToken;
-import com.me.xpf.pigggeon.model.api.Bucket;
-import com.me.xpf.pigggeon.model.api.Comment;
-import com.me.xpf.pigggeon.model.api.Like;
-import com.me.xpf.pigggeon.model.api.Shot;
-import com.me.xpf.pigggeon.model.api.User;
+import com.me.xpf.pigggeon.model.entity.AccessToken;
+import com.me.xpf.pigggeon.model.entity.Bucket;
+import com.me.xpf.pigggeon.model.entity.Comment;
+import com.me.xpf.pigggeon.model.entity.Like;
+import com.me.xpf.pigggeon.model.entity.Shot;
+import com.me.xpf.pigggeon.model.entity.User;
 
 import java.util.List;
 
@@ -120,7 +120,9 @@ public class ApiDribbble implements Constant {
         Observable<List<Bucket>> buckets();
 
         @GET("buckets/{id}/shots")
-        Observable<List<Shot>> getBucketImage(@Path("id") int id, @Query(PER_PAGE) int perPage);
+        Observable<List<Shot>> getBucketImage(
+                @Path("id") int id,
+                @Query(PER_PAGE) int perPage);
 
     }
 

@@ -1,11 +1,10 @@
 package com.me.xpf.pigggeon.presenter;
 
-import com.me.xpf.pigggeon.model.api.Shot;
+import com.me.xpf.pigggeon.model.entity.Shot;
 import com.me.xpf.pigggeon.model.usecase.ShotUsecase;
 import com.me.xpf.pigggeon.view.ShotsView;
 import com.xpf.me.architect.presenter.BasePresenter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -49,7 +48,7 @@ public class ShotsPresenter extends BasePresenter<ShotsView> {
                         }
 
                         @Override
-                        public void onNext(List<com.me.xpf.pigggeon.model.api.Shot> shots) {
+                        public void onNext(List<com.me.xpf.pigggeon.model.entity.Shot> shots) {
                             if (getView() != null) {
                                 if (page == 1) {
                                     getView().setData(shots);

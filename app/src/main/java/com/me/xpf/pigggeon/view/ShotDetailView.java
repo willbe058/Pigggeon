@@ -1,8 +1,7 @@
 package com.me.xpf.pigggeon.view;
 
-import com.me.xpf.pigggeon.model.BucketWrapper;
-import com.me.xpf.pigggeon.model.api.Bucket;
-import com.me.xpf.pigggeon.model.api.Comment;
+import com.me.xpf.pigggeon.model.entity.BucketWrapper;
+import com.me.xpf.pigggeon.model.entity.Comment;
 import com.xpf.me.architect.view.IView;
 
 import java.util.List;

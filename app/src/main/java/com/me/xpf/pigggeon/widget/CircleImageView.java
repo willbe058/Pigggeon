@@ -24,7 +24,8 @@ import android.widget.ImageView;
 import com.me.xpf.pigggeon.R;
 
 
-public class CircleImageView extends ImageView {
+public class
+CircleImageView extends ImageView {
 
     private static final ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
 

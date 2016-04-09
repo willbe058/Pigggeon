@@ -1,7 +1,7 @@
 package com.me.xpf.pigggeon.model.usecase;
 
 import com.me.xpf.pigggeon.http.ApiDribbble;
-import com.me.xpf.pigggeon.model.api.Like;
+import com.me.xpf.pigggeon.model.entity.Like;
 import com.xpf.me.architect.model.IModel;
 
 import rx.Observable;

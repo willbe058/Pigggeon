@@ -1,4 +1,4 @@
-package com.me.xpf.pigggeon.model.api;
+package com.me.xpf.pigggeon.model.entity;
 
 import com.google.gson.annotations.Expose;
 

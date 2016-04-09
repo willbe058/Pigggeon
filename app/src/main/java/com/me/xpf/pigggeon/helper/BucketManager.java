@@ -1,14 +1,13 @@
 package com.me.xpf.pigggeon.helper;
 
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
 import com.me.xpf.pigggeon.http.ApiDribbble;
-import com.me.xpf.pigggeon.model.BucketWrapper;
-import com.me.xpf.pigggeon.model.api.Bucket;
-import com.me.xpf.pigggeon.model.api.Shot;
+import com.me.xpf.pigggeon.model.entity.BucketWrapper;
+import com.me.xpf.pigggeon.model.entity.Bucket;
+import com.me.xpf.pigggeon.model.entity.Shot;
 import com.me.xpf.pigggeon.model.usecase.BucketsUsecase;
 
 import java.lang.ref.WeakReference;
