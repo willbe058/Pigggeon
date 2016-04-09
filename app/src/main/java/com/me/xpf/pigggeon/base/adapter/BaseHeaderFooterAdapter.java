@@ -23,6 +23,8 @@ import java.util.List;
  */
 public abstract class BaseHeaderFooterAdapter<T> extends RecyclerView.Adapter<RecyclerHolder> implements MvpFragment.OnUpdateListener {
 
+    private static final String TAG = BaseHeaderFooterAdapter.class.getName();
+
     public static final int VIEW_ITEM = 0;
 
     public static final int VIEW_FOOTER = 1;
@@ -196,7 +198,11 @@ public abstract class BaseHeaderFooterAdapter<T> extends RecyclerView.Adapter<Re
 
         public void onLoadMore(int page) {
             realData.add(null);
-            notifyItemInserted(realData.size());
+            try {
+                notifyItemInserted(realData.size());
+            } catch (Exception e) {
+                Log.d(TAG, e.getLocalizedMessage());
+            }
             loadMoreListener.loadMore(page);
         }
     }

@@ -86,29 +86,15 @@ public class ShotsAdapter extends BaseAdapter<Shot> {
         if (SettingsUtil.isDarkMode()) {
 
         }
-
-
-        if (PreferenceUtil.getPreString(Config.PRE_SHOT_KEY, "").equals("teams")) {
-            userName.setText(shot.getTeam().getName());
-            Glide.with(mContext)
-                    .asDrawable()
-                    .load(shot.getTeam().getAvatarUrl())
-                    .apply(myRequestOptions.centerCrop(AppData.getContext())
-                            .override(avatarSize, avatarSize)
-                            .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext()))
-                            .placeholder(R.drawable.ic_avatar_default))
-                    .into(userPhoto);
-        } else {
-            userName.setText(shot.getUser().getName());
-            Glide.with(mContext)
-                    .asDrawable()
-                    .load(shot.getUser().getAvatarUrl())
-                    .apply(myRequestOptions.centerCrop(AppData.getContext())
-                            .override(avatarSize, avatarSize)
-                            .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext()))
-                            .placeholder(R.drawable.ic_avatar_default))
-                    .into(userPhoto);
-        }
+        userName.setText(shot.getUser().getName());
+        Glide.with(mContext)
+                .asDrawable()
+                .load(shot.getUser().getAvatarUrl())
+                .apply(myRequestOptions.centerCrop(AppData.getContext())
+                        .override(avatarSize, avatarSize)
+                        .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext()))
+                        .placeholder(R.drawable.ic_avatar_default))
+                .into(userPhoto);
         shotName.setText(shot.getTitle());
         textView.setText(String.valueOf(shot.getViewsCount()));
         textComment.setText(String.valueOf(shot.getCommentsCount()));

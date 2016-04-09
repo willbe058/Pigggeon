@@ -1,9 +1,11 @@
 package com.me.xpf.pigggeon.ui.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -31,17 +33,19 @@ import com.bumptech.glide.request.transition.Transition;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.me.xpf.pigggeon.R;
 import com.me.xpf.pigggeon.app.PigggeonApp;
-import com.me.xpf.pigggeon.base.activity.BaseStatusBarTintActivity;
+import com.me.xpf.pigggeon.base.MyRequestOptions;
+import com.me.xpf.pigggeon.base.activity.BaseStatusBarTintMvpActivity;
 import com.me.xpf.pigggeon.config.Config;
 import com.me.xpf.pigggeon.config.Constant;
 import com.me.xpf.pigggeon.event.BusProvider;
 import com.me.xpf.pigggeon.event.Event;
-import com.me.xpf.pigggeon.http.ApiDribbble;
 import com.me.xpf.pigggeon.model.entity.User;
 import com.me.xpf.pigggeon.model.usecase.LogoutUsecase;
+import com.me.xpf.pigggeon.presenter.MainPresenter;
 import com.me.xpf.pigggeon.ui.fragment.ShotsFragment;
 import com.me.xpf.pigggeon.utils.PreferenceUtil;
 import com.me.xpf.pigggeon.utils.SettingsUtil;
+import com.me.xpf.pigggeon.view.MainView;
 import com.me.xpf.pigggeon.widget.HtmlTextView;
 import com.me.xpf.pigggeon.widget.animation.GlideCircleTransform;
 import com.umeng.fb.FeedbackAgent;
@@ -55,12 +59,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import jp.wasabeef.blurry.Blurry;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
 import uk.co.chrisjenx.calligraphy.TypefaceUtils;
 
-public class MainActivity extends BaseStatusBarTintActivity {
+public class MainActivity extends BaseStatusBarTintMvpActivity<MainView, MainPresenter> implements MainView {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -80,8 +82,6 @@ public class MainActivity extends BaseStatusBarTintActivity {
 
     private HtmlTextView userBio;
 
-    private View headerView;
-
     private ImageView blurBack;
 
     @Bind(R.id.nav_view)
@@ -89,13 +89,11 @@ public class MainActivity extends BaseStatusBarTintActivity {
 
     private CalligraphyTypefaceSpan typefaceSpan;
 
-    private String token;
-
     private ActionBarDrawerToggle mToggle;
 
     private boolean isLoaded;
 
-    private String mShot = "", mSort = "";
+    private String SHOT_TYPE_STRING = "", SORT_TYPE_STRING = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,11 +101,8 @@ public class MainActivity extends BaseStatusBarTintActivity {
         BusProvider.getInstance().register(this);
         typefaceSpan = new CalligraphyTypefaceSpan(
                 TypefaceUtils.load(AppData.getContext().getAssets(), "fonts/Comfortaa-Regular.ttf"));
-        checkToken();
-        FeedbackAgent agent = new FeedbackAgent(this);
-        agent.closeAudioFeedback();
-        //sync user's feedback
-        agent.sync();
+        //checkToken();
+        presenter.onCreate();
     }
 
     @Override
@@ -117,6 +112,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
     }
 
     private void checkToken() {
+        String token;
         if (getIntent().getStringExtra("token") != null) {
             token = getIntent().getStringExtra("token");
         } else {
@@ -146,7 +142,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
         super.setupViews();
 
         mToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.hello_world, R.string.hello_world);
-        drawerLayout.setDrawerListener(mToggle);
+        drawerLayout.addDrawerListener(mToggle);
 
         setupDrawerContent(navigationView);
         setupViewPager(viewPager);
@@ -167,7 +163,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
     }
 
     private void setupDrawerContent(final NavigationView navigationView) {
-        headerView = navigationView.getHeaderView(0);
+        View headerView = navigationView.getHeaderView(0);
         header = ((ImageView) headerView.findViewById(R.id.header_photo));
         userName = ((TextView) headerView.findViewById(R.id.user_name_in_drawer));
         userBio = ((HtmlTextView) headerView.findViewById(R.id.bio));
@@ -218,9 +214,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
                                         .cancelable(false)
                                         .build();
                                 progressDialog.show();
-                                new LogoutUsecase()
-                                        .clearCookie()
-                                        .finallyDo(progressDialog::dismiss)
+                                new LogoutUsecase().clearCookie().finallyDo(progressDialog::dismiss)
                                         .subscribe(new Subscriber<Object>() {
                                             @Override
                                             public void onCompleted() {
@@ -250,7 +244,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
                     drawerLayout.closeDrawers();
                     break;
                 case R.id.shots:
-                    mShot = "";
+                    SHOT_TYPE_STRING = "";
                     PreferenceUtil.setPreString(Config.PRE_SHOT_KEY, Constant.SHOTS);
                     updateShots();
                     text = "SHOTS";
@@ -259,7 +253,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
 
                     break;
                 case R.id.teams:
-                    mShot = Constant.TEAMS;
+                    SHOT_TYPE_STRING = Constant.TEAMS;
                     PreferenceUtil.setPreString(Config.PRE_SHOT_KEY, Constant.TEAMS);
                     updateShots();
                     text = "TEAMS";
@@ -268,7 +262,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
 
                     break;
                 case R.id.debuts:
-                    mShot = Constant.DEBUTS;
+                    SHOT_TYPE_STRING = Constant.DEBUTS;
                     PreferenceUtil.setPreString(Config.PRE_SHOT_KEY, Constant.DEBUTS);
                     updateShots();
                     text = "DEBUTS";
@@ -277,7 +271,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
 
                     break;
                 case R.id.playoffs:
-                    mShot = Constant.PLAY_OFFS;
+                    SHOT_TYPE_STRING = Constant.PLAY_OFFS;
                     PreferenceUtil.setPreString(Config.PRE_SHOT_KEY, Constant.PLAY_OFFS);
                     updateShots();
                     text = "PLAYOFFS";
@@ -286,7 +280,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
 
                     break;
                 case R.id.rebounds:
-                    mShot = Constant.REBOUNDS;
+                    SHOT_TYPE_STRING = Constant.REBOUNDS;
                     PreferenceUtil.setPreString(Config.PRE_SHOT_KEY, Constant.REBOUNDS);
                     updateShots();
                     text = "REBOUNDS";
@@ -295,7 +289,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
 
                     break;
                 case R.id.animated:
-                    mShot = Constant.ANIMATED;
+                    SHOT_TYPE_STRING = Constant.ANIMATED;
                     PreferenceUtil.setPreString(Config.PRE_SHOT_KEY, Constant.ANIMATED);
                     updateShots();
                     text = "ANIMATED";
@@ -312,7 +306,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
     }
 
     private void updateShots() {
-        BusProvider.getInstance().post(new Event.UpdateShotEvent(mShot, mSort));
+        BusProvider.getInstance().post(new Event.UpdateShotEvent(SHOT_TYPE_STRING, SORT_TYPE_STRING));
     }
 
     public void onClickHeader(View view) {
@@ -324,57 +318,10 @@ public class MainActivity extends BaseStatusBarTintActivity {
     }
 
     /**
-     * load the header view
+     * load the header view, wrapper for {@link MainPresenter#loadUserAvatar()}
      */
     private void loadUserAvatar() {
-        final int avatarSize = getResources().getDimensionPixelSize(R.dimen.user);
-        ApiDribbble.dribbble().user().subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<User>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Snackbar.make(drawerLayout, e.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
-                                .setAction("RETRY", v -> {
-                                    loadUserAvatar();
-                                });
-                        isLoaded = false;
-                    }
-
-                    @Override
-                    public void onNext(User user) {
-                        if (user != null) {
-                            isLoaded = true;
-                            PigggeonApp.setUser(user);
-                            PigggeonApp.setUserId(user.getId());
-                            userName.setText(user.getName());
-                            userBio.setText(user.getBio() != null ? user.getBio() : "");
-                            Glide.with(AppData.getContext())
-                                    .asDrawable()
-                                    .load(user.getAvatarUrl())
-                                    .apply(new ShotDetailActivity.MyRequestOptions()
-                                            .override(avatarSize, avatarSize)
-                                            .centerCrop(AppData.getContext())
-                                            .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext())))
-                                    .into(header);
-
-                            Glide.with(AppData.getContext())
-                                    .asBitmap()
-                                    .load(user.getAvatarUrl())
-                                    .into(new SimpleTarget<Bitmap>() {
-                                        @Override
-                                        public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                                            blurBack.setImageBitmap(resource);
-                                            Blurry.with(AppData.getContext()).capture(blurBack).into(blurBack);
-                                        }
-                                    });
-                        }
-                    }
-                });
+        presenter.loadUserAvatar();
     }
 
     private void setTabText(CharSequence text, CalligraphyTypefaceSpan typefaceSpan) {
@@ -386,22 +333,22 @@ public class MainActivity extends BaseStatusBarTintActivity {
     private void handleSortButton(final MenuItem item, int which) {
         switch (which) {
             case R.id.popularity:
-                mSort = Constant.POPULARITY;
+                SORT_TYPE_STRING = Constant.POPULARITY;
                 updateShots();
                 item.setIcon(R.drawable.dpball);
                 break;
             case R.id.comments:
-                mSort = Constant.COMMENTS;
+                SORT_TYPE_STRING = Constant.COMMENTS;
                 updateShots();
                 item.setIcon(R.drawable.dpcomments);
                 break;
             case R.id.recent:
-                mSort = Constant.RECENT;
+                SORT_TYPE_STRING = Constant.RECENT;
                 updateShots();
                 item.setIcon(R.drawable.dprecent);
                 break;
             case R.id.views:
-                mSort = Constant.VIEWS;
+                SORT_TYPE_STRING = Constant.VIEWS;
                 updateShots();
                 item.setIcon(R.drawable.dpviews);
                 break;
@@ -419,6 +366,12 @@ public class MainActivity extends BaseStatusBarTintActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         mToggle.syncState();
         super.onPostCreate(savedInstanceState);
+    }
+
+    @NonNull
+    @Override
+    public MainPresenter createPresenter() {
+        return new MainPresenter();
     }
 
     @Override
@@ -472,6 +425,54 @@ public class MainActivity extends BaseStatusBarTintActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
+    public void updateUserAvatar(User user) {
+        final int avatarSize = getResources().getDimensionPixelSize(R.dimen.user);
+        if (user != null) {
+            isLoaded = true;
+            PigggeonApp.setUser(user);
+            PigggeonApp.setUserId(user.getId());
+            userName.setText(user.getName());
+            userBio.setText(user.getBio() != null ? user.getBio() : "");
+            Glide.with(AppData.getContext())
+                    .asDrawable()
+                    .load(user.getAvatarUrl())
+                    .apply(new MyRequestOptions()
+                            .override(avatarSize, avatarSize)
+                            .centerCrop(AppData.getContext())
+                            .transform(AppData.getContext(), new GlideCircleTransform(AppData.getContext())))
+                    .into(header);
+
+            Glide.with(AppData.getContext())
+                    .asBitmap()
+                    .load(user.getAvatarUrl())
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                            blurBack.setImageBitmap(resource);
+                            Blurry.with(AppData.getContext()).capture(blurBack).into(blurBack);
+                        }
+                    });
+        }
+    }
+
+    @Override
+    public void setError(String error) {
+        Snackbar.make(drawerLayout, error, Snackbar.LENGTH_INDEFINITE)
+                .setAction("RETRY", v -> {
+                    loadUserAvatar();
+                });
+        isLoaded = false;
+    }
+
+    /**
+     * main adapter for ViewPager
+     */
     static class Adapter extends FragmentPagerAdapter {
 
         private final List<Fragment> mFragments = new ArrayList<>();
@@ -500,6 +501,7 @@ public class MainActivity extends BaseStatusBarTintActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
+            //we change tab font here
             CharSequence text = mFragmentTitles.get(position);
             CalligraphyTypefaceSpan typefaceSpan = new CalligraphyTypefaceSpan(
                     TypefaceUtils.load(AppData.getContext().getAssets(), "fonts/Comfortaa-Regular.ttf"));
